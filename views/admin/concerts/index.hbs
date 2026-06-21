@@ -1,0 +1,115 @@
+<div class="min-h-screen bg-[#F4F4F4] font-sans text-gray-900 flex">
+
+  <!-- Sidebar -->
+  <aside class="fixed top-0 left-0 z-40 w-64 h-screen bg-white border-r border-gray-200">
+    <div class="h-full px-6 py-10 overflow-y-auto flex flex-col">
+      <a href="/" class="mb-12">
+        <span class="text-2xl font-black tracking-tight uppercase text-black">TICKETER.</span>
+        <span class="block font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-1">Admin Panel</span>
+      </a>
+      
+      <ul class="space-y-2 flex-1">
+        <li>
+          <a href="/admin" class="flex items-center px-4 py-3 text-gray-500 hover:text-black hover:bg-gray-50 font-mono text-xs uppercase tracking-widest transition-colors">
+            Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="/admin/bookings" class="flex items-center px-4 py-3 text-gray-500 hover:text-black hover:bg-gray-50 font-mono text-xs uppercase tracking-widest transition-colors">
+            Réservations
+          </a>
+        </li>
+        <li>
+          <a href="/admin/concerts" class="flex items-center px-4 py-3 bg-black text-white font-mono text-xs uppercase tracking-widest transition-colors">
+            <span class="w-2 h-2 bg-white mr-3"></span> Concerts
+          </a>
+        </li>
+        <li>
+          <a href="/admin/genres" class="flex items-center px-4 py-3 text-gray-500 hover:text-black hover:bg-gray-50 font-mono text-xs uppercase tracking-widest transition-colors">
+            Genres
+          </a>
+        </li>
+        <li>
+          <a href="/admin/bands" class="flex items-center px-4 py-3 text-gray-500 hover:text-black hover:bg-gray-50 font-mono text-xs uppercase tracking-widest transition-colors">
+            Groupes
+          </a>
+        </li>
+        <li>
+          <a href="/admin/users" class="flex items-center px-4 py-3 text-gray-500 hover:text-black hover:bg-gray-50 font-mono text-xs uppercase tracking-widest transition-colors">
+            Utilisateurs
+          </a>
+        </li>
+      </ul>
+
+      <div class="mt-auto border-t border-gray-200 pt-6">
+        <a href="/logout" class="flex items-center px-4 py-3 text-red-500 hover:bg-red-50 font-mono text-xs uppercase tracking-widest transition-colors">
+          Déconnexion
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="ml-64 p-12 w-full max-w-7xl">
+    
+    <div class="mb-12 flex items-end justify-between">
+      <div>
+        <p class="font-mono text-[10px] uppercase tracking-widest text-gray-400 mb-2">Base de données</p>
+        <h1 class="text-4xl font-black tracking-tight uppercase text-black">Concerts</h1>
+      </div>
+      <a href="/admin/concerts/create" class="bg-black text-white text-xs font-bold uppercase tracking-widest px-6 py-3 hover:bg-gray-800 transition-colors">
+        Créer un Concert
+      </a>
+    </div>
+
+    <!-- Concerts Table -->
+    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead class="border-b border-gray-200 bg-gray-50 font-mono text-[10px] uppercase tracking-widest text-gray-500">
+            <tr>
+              <th class="px-6 py-4 font-normal">Titre / Groupe</th>
+              <th class="px-6 py-4 font-normal">Genre</th>
+              <th class="px-6 py-4 font-normal">Lieu & Date</th>
+              <th class="px-6 py-4 font-normal">Billetterie</th>
+              <th class="px-6 py-4 font-normal text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {{#each concerts}}
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4">
+                <p class="font-bold text-sm text-black">{{title}}</p>
+                <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mt-1">{{band_id.name}}</p>
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-600">{{genre_id.name}}</td>
+              <td class="px-6 py-4">
+                <p class="text-sm text-gray-900">{{location}}</p>
+                <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mt-1">{{date}}</p>
+              </td>
+              <td class="px-6 py-4">
+                <p class="text-sm font-bold text-black">{{price}}€</p>
+                <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mt-1">{{availableTickets}} tickets dispo</p>
+              </td>
+              <td class="px-6 py-4 text-right">
+                <div class="flex items-center justify-end gap-3">
+                  <a href="/admin/concerts/edit?id={{_id}}" class="text-[10px] font-mono uppercase tracking-widest text-black hover:bg-gray-100 border border-transparent hover:border-gray-300 px-3 py-1 transition-colors">
+                    Éditer
+                  </a>
+                  <form action="/admin/concerts/delete" method="POST" class="m-0">
+                    <input type="hidden" name="id" value="{{_id}}">
+                    <button type="submit" class="text-[10px] font-mono uppercase tracking-widest text-red-500 hover:text-white hover:bg-red-500 border border-transparent hover:border-red-500 px-3 py-1 transition-colors">
+                      Supprimer
+                    </button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>

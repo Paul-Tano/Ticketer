@@ -1,0 +1,118 @@
+<div class="min-h-screen bg-[#F4F4F4] font-sans text-gray-900 flex">
+  <!-- Minimal Sidebar -->
+  <aside class="fixed top-0 left-0 z-40 w-64 h-screen bg-white border-r border-gray-200">
+    <div class="h-full px-6 py-10 flex flex-col">
+      <a href="/admin" class="mb-12">
+        <span class="text-2xl font-black tracking-tight uppercase text-black">TICKETER.</span>
+        <span class="block font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-1">Admin Panel</span>
+      </a>
+      <a href="/admin/concerts" class="text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-black transition-colors mb-4">
+        ← Retour aux Concerts
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="ml-64 p-12 w-full max-w-4xl">
+    <div class="mb-12">
+      <p class="font-mono text-[10px] uppercase tracking-widest text-gray-400 mb-2">Base de données</p>
+      <h1 class="text-4xl font-black tracking-tight uppercase text-black">Nouveau Concert</h1>
+    </div>
+
+    <div class="bg-white border border-gray-200 shadow-sm p-8">
+      <form action="/admin/concerts/create" method="POST" enctype="multipart/form-data" class="space-y-8">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2 md:col-span-2">
+            <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Titre de l'événement
+            </label>
+            <input type="text" name="title" required placeholder="Ex: Summer Tour 2026"
+                   class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none">
+          </div>
+
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+            <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Artiste / Groupe
+            </label>
+            <select name="band_id" required class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none appearance-none cursor-pointer">
+              <option value="">Sélectionner</option>
+              {{#each bands}}
+                <option value="{{this._id}}">{{this.name}}</option>
+              {{/each}}
+            </select>
+          </div>
+
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+            <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Genre
+            </label>
+            <select name="genre_id" required class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none appearance-none cursor-pointer">
+              <option value="">Sélectionner</option>
+              {{#each genres}}
+                <option value="{{this._id}}">{{this.name}}</option>
+              {{/each}}
+            </select>
+          </div>
+
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+            <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Lieu
+            </label>
+            <input type="text" name="location" required placeholder="Ex: Accor Arena"
+                   class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none">
+          </div>
+
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+            <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Date
+            </label>
+            <input type="date" name="date" required
+                   class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none">
+          </div>
+
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+            <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Prix du billet (€)
+            </label>
+            <input type="number" name="price" required placeholder="Ex: 45"
+                   class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none">
+          </div>
+
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+            <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Billets disponibles
+            </label>
+            <input type="number" name="availableTickets" required placeholder="Ex: 5000"
+                   class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none">
+          </div>
+
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2 md:col-span-2">
+            <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Image (Upload)
+            </label>
+            <input type="file" name="image" accept="image/*"
+                   class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none cursor-pointer">
+          </div>
+          
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2 md:col-span-2">
+            <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Description
+            </label>
+            <textarea name="description" rows="4" required placeholder="Description de l'événement..."
+                      class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none resize-none"></textarea>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-6 pt-6">
+          <button type="submit" class="bg-black text-white font-bold uppercase tracking-widest text-xs px-10 py-4 hover:bg-gray-800 transition-colors">
+            Créer l'événement
+          </button>
+          <a href="/admin/concerts" class="text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-black transition-colors border-b border-transparent hover:border-black pb-0.5">
+            Annuler
+          </a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>

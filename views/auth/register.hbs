@@ -1,0 +1,133 @@
+<div class="min-h-screen bg-white flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans text-gray-900">
+  
+  <div class="sm:mx-auto sm:w-full sm:max-w-xl">
+    <div class="text-center mb-8">
+      <a href="/" class="inline-block text-2xl font-black tracking-tight uppercase hover:opacity-70 transition-opacity mb-4">
+        TICKETER.
+      </a>
+      <h2 class="text-4xl font-black tracking-tight uppercase mb-2">
+        Nouvel Accès
+      </h2>
+      <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500">
+        Déjà membre ? 
+        <a href="/login" class="text-black border-b border-black hover:text-gray-500 hover:border-gray-500 transition-colors pb-0.5 ml-1">
+          S'identifier
+        </a>
+      </p>
+    </div>
+  </div>
+
+  <div class="mt-4 sm:mx-auto sm:w-full sm:max-w-xl">
+    
+    {{#if errors.error}}
+    <div class="mb-8 border border-black p-4 flex items-start bg-[#F4F4F4]">
+      <div class="flex-shrink-0 mt-0.5">
+        <svg class="h-4 w-4 text-black" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+        </svg>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-black mb-1">
+          Erreur d'inscription
+        </h3>
+        <div class="text-sm text-gray-600 font-medium">
+          <p>{{errors.error}}</p>
+        </div>
+      </div>
+    </div>
+    {{/if}}
+
+    <div class="bg-white py-8 px-4 sm:px-10">
+      <form class="space-y-8" action="/register" method="POST">
+        
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
+          <!-- Nom d'utilisateur -->
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+            <label for="username" class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Nom d'utilisateur
+            </label>
+            <input type="text" id="username" name="username" placeholder="Alex Dubois" required
+              class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none placeholder-gray-300">
+            {{#if errors.username}}
+            <div class="absolute inset-y-0 right-0 pt-6 flex items-center pointer-events-none">
+              <svg class="h-4 w-4 text-black" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+            </div>
+            {{/if}}
+            {{#if errors.username}}
+            <p class="absolute -bottom-5 left-0 text-[10px] font-mono tracking-widest uppercase text-gray-500">{{errors.username}}</p>
+            {{/if}}
+          </div>
+
+          <!-- Email -->
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+            <label for="email" class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Adresse email
+            </label>
+            <input type="email" id="email" name="email" placeholder="alex@exemple.fr" required
+              class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none placeholder-gray-300">
+            {{#if errors.email}}
+            <div class="absolute inset-y-0 right-0 pt-6 flex items-center pointer-events-none">
+              <svg class="h-4 w-4 text-black" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+            </div>
+            {{/if}}
+            {{#if errors.email}}
+            <p class="absolute -bottom-5 left-0 text-[10px] font-mono tracking-widest uppercase text-gray-500">{{errors.email}}</p>
+            {{/if}}
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2 mt-4">
+          <!-- Mot de passe -->
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+            <label for="password" class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Mot de passe
+            </label>
+            <input type="password" id="password" name="password" placeholder="••••••••" required
+              class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none placeholder-gray-300">
+            {{#if errors.password}}
+            <p class="absolute -bottom-5 left-0 text-[10px] font-mono tracking-widest uppercase text-gray-500">{{errors.password}}</p>
+            {{/if}}
+          </div>
+
+          <!-- Confirmation mot de passe -->
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+            <label for="confirm" class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Confirmation
+            </label>
+            <input type="password" id="confirm" name="confirm" placeholder="••••••••" required
+              class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none placeholder-gray-300">
+            {{#if errors.confirm}}
+            <p class="absolute -bottom-5 left-0 text-[10px] font-mono tracking-widest uppercase text-gray-500">{{errors.confirm}}</p>
+            {{/if}}
+          </div>
+        </div>
+
+        <!-- Terms -->
+        <div class="flex items-start pt-6 border-t border-gray-100 mt-8">
+          <div class="flex items-center h-5">
+            <input id="tmc" name="tmc" type="checkbox" required
+              class="h-4 w-4 text-black focus:ring-black border-gray-300 rounded-none cursor-pointer transition-colors mt-1 accent-black">
+          </div>
+          <div class="ml-3 text-sm">
+            <label for="tmc" class="font-mono text-[10px] uppercase tracking-widest text-gray-500 cursor-pointer block mb-1">
+              Conditions
+            </label>
+            <p class="text-xs text-gray-500">
+              J'accepte les 
+              <a href="#" class="text-black border-b border-black hover:text-gray-500 hover:border-gray-500 transition-colors pb-0.5">termes</a> 
+              d'utilisation.
+            </p>
+          </div>
+        </div>
+
+        <div class="pt-4">
+          <button type="submit"
+            class="w-full flex justify-center py-4 px-4 text-xs font-bold uppercase tracking-widest text-white bg-black hover:bg-gray-800 focus:outline-none transition-colors">
+            Confirmer l'accès
+          </button>
+        </div>
+      </form>
+      
+    </div>
+  </div>
+</div>

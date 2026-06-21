@@ -1,0 +1,134 @@
+<div class="bg-[#F8F9FA] min-h-screen pb-32 font-sans text-gray-900">
+  <!-- Cinematic Hero Section -->
+  <div class="relative w-full h-[60vh] bg-white overflow-hidden shadow-sm">
+    <img src="{{concert.image}}" alt="{{concert.title}}" class="w-full h-full object-cover opacity-90">
+    <!-- Fade to light background at the bottom -->
+    <div class="absolute inset-0 bg-gradient-to-t from-[#F8F9FA] via-[#F8F9FA]/60 to-transparent"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-8 -mt-20 relative z-10 flex flex-col lg:flex-row gap-16">
+    
+    <!-- Left Column: Details -->
+    <div class="lg:w-2/3 space-y-16">
+      
+      <!-- Title Block -->
+      <div class="bg-transparent pt-4">
+        <p class="font-mono text-xs uppercase tracking-widest text-orange-600 mb-4 drop-shadow-sm">{{concert.genre_id.name}}</p>
+        <h1 class="text-6xl md:text-7xl font-black tracking-tight leading-[0.9] mb-4 uppercase text-black">{{concert.title}}</h1>
+        <p class="text-xl font-medium text-gray-600">Live set by <span class="text-black font-bold">{{concert.band_id.name}}</span></p>
+      </div>
+
+      <!-- Info Grid -->
+      <div class="border-t border-gray-200 pt-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
+          <div>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-2 flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-orange-500"></i> When</p>
+            <p class="text-lg font-bold tracking-tight text-black">{{concert.formattedDate}}</p>
+          </div>
+          
+          <div>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-2 flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-orange-500"></i> Where</p>
+            <p class="text-lg font-bold tracking-tight text-black">{{concert.location}}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Description Block -->
+      <div class="border-t border-gray-200 pt-8">
+        <h2 class="font-mono text-[10px] uppercase tracking-widest text-orange-600 mb-6">About the event</h2>
+        <div class="prose prose-lg text-gray-600 leading-relaxed">
+          <p>{{concert.description}}</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Sticky Reservation Widget -->
+    <div class="lg:w-1/3">
+      <div class="sticky top-[100px] bg-white/90 backdrop-blur-2xl border border-gray-200 p-8 shadow-2xl shadow-orange-500/10 rounded-xl">
+        
+        <div class="mb-8">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-2">Admission</p>
+          <!-- Massive Price -->
+          <div class="text-5xl font-black tracking-tighter text-orange-600 drop-shadow-sm">{{concert.price}} <span class="text-lg font-bold tracking-normal text-gray-400">FCFA</span></div>
+        </div>
+
+        {{#if concert.availableTickets}}
+          {{#if user}}
+            <form action="/bookings" method="POST" id="booking-form">
+              <input type="hidden" name="concert_id" value="{{concert._id}}">
+              
+              <!-- Minimal Table-Row Select -->
+              <div class="mb-8 border-t border-b border-gray-200 relative">
+                <label for="ticketCount" class="absolute top-1/2 -translate-y-1/2 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-500 pointer-events-none">Quantité</label>
+                <select name="ticketCount" id="ticketCount" class="w-full bg-transparent text-right font-bold text-lg text-black py-6 outline-none appearance-none cursor-pointer pr-6">
+                  <option value="1" class="bg-white">1 billet</option>
+                  <option value="2" class="bg-white">2 billets</option>
+                  <option value="3" class="bg-white">3 billets</option>
+                  <option value="4" class="bg-white">4 billets</option>
+                  <option value="5" class="bg-white">5 billets</option>
+                </select>
+                <!-- Custom Arrow -->
+                <div class="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-black">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 9l6 6 6-6"/>
+                  </svg>
+                </div>
+              </div>
+
+              <div class="flex justify-between items-end mb-8">
+                <span class="font-mono text-[10px] uppercase tracking-widest text-gray-500">Total</span>
+                <span id="totalPrice" class="text-2xl font-black tracking-tight text-orange-600">{{concert.price}} FCFA</span>
+              </div>
+
+              <!-- VIP Button -->
+              <button type="submit" class="w-full bg-orange-600 text-white text-center font-black uppercase tracking-widest text-xs py-5 rounded-sm hover:bg-orange-700 hover:shadow-[0_10px_20px_rgba(234,88,12,0.3)] hover:-translate-y-1 transition-all flex items-center justify-center gap-2">
+                <i data-lucide="ticket" class="w-4 h-4"></i> Acquérir
+              </button>
+              
+              <div class="text-center mt-4">
+                <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500">{{concert.availableTickets}} billets restants</p>
+              </div>
+            </form>
+          {{else}}
+            <div class="border-t border-gray-200 pt-8 mb-6">
+              <p class="font-mono text-xs uppercase tracking-widest text-gray-500 mb-6 text-center">Authentification requise</p>
+              <a href="/login" class="w-full flex items-center justify-center gap-2 bg-orange-600 text-white text-center font-black uppercase tracking-widest text-xs py-5 rounded-sm hover:bg-orange-700 hover:shadow-[0_10px_20px_rgba(234,88,12,0.3)] hover:-translate-y-1 transition-all">
+                <i data-lucide="log-in" class="w-4 h-4"></i> Se connecter
+              </a>
+            </div>
+          {{/if}}
+        {{else}}
+          <!-- Sold out state -->
+          <div class="border-t border-gray-200 pt-6 text-center">
+            <h4 class="font-black text-2xl tracking-tight uppercase mb-2 text-black">Sold Out</h4>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500">Liste d'attente indisponible</p>
+          </div>
+        {{/if}}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Simple script to update total price dynamically
+  const ticketCountSelect = document.getElementById('ticketCount');
+  const totalPriceEl = document.getElementById('totalPrice');
+  const basePrice = {{concert.price}};
+  const maxAvailable = {{concert.availableTickets}};
+
+  if(ticketCountSelect) {
+    // Disable options if they exceed available tickets
+    Array.from(ticketCountSelect.options).forEach(option => {
+      if(parseInt(option.value) > maxAvailable) {
+        option.disabled = true;
+      }
+    });
+
+    ticketCountSelect.addEventListener('change', (e) => {
+      const count = parseInt(e.target.value);
+      totalPriceEl.textContent = (count * basePrice) + ' FCFA';
+    });
+  }
+</script>

@@ -1,0 +1,12 @@
+@import "tailwindcss";
+
+@source "../node_modules/flowbite-datepicker";
+/* Preline UI */
+@import "./node_modules/preline/variants.css";
+@import "./node_modules/preline/src/plugins/datepicker/styles.css";
+
+/* Plugins */
+@plugin "@tailwindcss/forms";
+
+/* Preline Themes */
+@import "./themes/theme.css";

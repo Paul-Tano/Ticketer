@@ -1,0 +1,100 @@
+<div class="min-h-screen bg-[#F4F4F4] font-sans text-gray-900 pb-24">
+  <div class="max-w-7xl mx-auto pt-24 px-8 flex flex-col md:flex-row gap-16">
+    
+    <!-- Sidebar -->
+    <aside class="w-full md:w-80 flex-shrink-0">
+      <div class="bg-white p-8 shadow-2xl shadow-black/5 border-t-8 border-black">
+        
+        <!-- Profile Pic -->
+        <div class="mb-8">
+          <div class="w-24 h-24 border-2 border-black p-1">
+            <img src="https://ui-avatars.com/api/?name={{user.firstname}}+{{user.lastname}}&background=000000&color=FFFFFF&rounded=false&size=200" 
+                 class="w-full h-full object-cover grayscale" alt="Profile">
+          </div>
+        </div>
+
+        <!-- Info -->
+        <div class="mb-8 border-b border-gray-100 pb-8">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-gray-400 mb-1">Identité</p>
+          <h2 class="text-3xl font-black tracking-tight uppercase text-black mb-1">{{user.firstname}} {{user.lastname}}</h2>
+          <p class="font-mono text-xs text-gray-500">{{user.email}}</p>
+        </div>
+        
+        <!-- Actions -->
+        <nav class="space-y-4">
+          <a href="/profile" class="block w-full border border-gray-200 text-gray-500 font-bold uppercase tracking-widest text-xs py-3 px-4 hover:border-black hover:text-black transition-colors">
+            Mon Profil
+          </a>
+          <a href="/users/profile/edit" class="block w-full bg-black text-white text-center font-bold uppercase tracking-widest text-xs py-3 transition-colors">
+            Paramètres
+          </a>
+        </nav>
+
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 space-y-12">
+      
+      <div class="bg-white shadow-2xl shadow-black/5">
+        <div class="p-8 border-b border-gray-200">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-gray-400 mb-2">Configuration</p>
+          <h1 class="text-4xl font-black tracking-tight uppercase text-black">Paramètres du compte</h1>
+        </div>
+
+        <form action="/users/profile/update" method="POST" class="p-8 space-y-10">
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+            <!-- Firstname -->
+            <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+              <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+                Prénom
+              </label>
+              <input type="text" name="firstname" value="{{user.firstname}}" 
+                     class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none">
+            </div>
+
+            <!-- Lastname -->
+            <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+              <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+                Nom
+              </label>
+              <input type="text" name="lastname" value="{{user.lastname}}" 
+                     class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none">
+            </div>
+
+            <!-- Email (Disabled) -->
+            <div class="border-b border-gray-100 relative pb-2 md:col-span-2 opacity-60">
+              <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+                Adresse Email
+              </label>
+              <input type="email" value="{{user.email}}" disabled
+                     class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none cursor-not-allowed">
+              <p class="absolute -bottom-5 right-0 font-mono text-[9px] uppercase tracking-widest text-gray-400">Vérouillé pour sécurité</p>
+            </div>
+            
+            <!-- Password -->
+            <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2 md:col-span-2 mt-4">
+              <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+                Nouveau mot de passe
+              </label>
+              <input type="password" name="password" placeholder="••••••••" 
+                     class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none placeholder-gray-300">
+              <p class="absolute -bottom-5 right-0 font-mono text-[9px] uppercase tracking-widest text-gray-400">Laisser vide pour conserver l'actuel</p>
+            </div>
+          </div>
+
+          <div class="pt-10 flex items-center justify-end gap-6 border-t border-gray-100">
+            <a href="/profile" class="text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-black transition-colors border-b border-transparent hover:border-black pb-0.5">
+              Annuler
+            </a>
+            <button type="submit" class="bg-black text-white font-bold uppercase tracking-widest text-xs px-10 py-4 hover:bg-gray-800 transition-colors">
+              Sauvegarder
+            </button>
+          </div>
+        </form>
+      </div>
+
+    </main>
+  </div>
+</div>

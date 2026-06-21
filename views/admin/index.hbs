@@ -1,0 +1,112 @@
+<div class="min-h-screen bg-[#F4F4F4] font-sans text-gray-900 flex">
+
+  <!-- Sidebar -->
+  <aside class="fixed top-0 left-0 z-40 w-64 h-screen bg-white border-r border-gray-200">
+    <div class="h-full px-6 py-10 overflow-y-auto flex flex-col">
+      <a href="/" class="mb-12">
+        <span class="text-2xl font-black tracking-tight uppercase text-black">TICKETER.</span>
+        <span class="block font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-1">Admin Panel</span>
+      </a>
+      
+      <ul class="space-y-2 flex-1">
+        <li>
+          <a href="/admin" class="flex items-center px-4 py-3 bg-black text-white font-mono text-xs uppercase tracking-widest transition-colors">
+            <span class="w-2 h-2 bg-white mr-3"></span> Dashboard
+          </a>
+        </li>
+        <li>
+          <a href="/admin/bookings" class="flex items-center px-4 py-3 text-gray-500 hover:text-black hover:bg-gray-50 font-mono text-xs uppercase tracking-widest transition-colors">
+            Réservations
+          </a>
+        </li>
+        <li>
+          <a href="/admin/concerts" class="flex items-center px-4 py-3 text-gray-500 hover:text-black hover:bg-gray-50 font-mono text-xs uppercase tracking-widest transition-colors">
+            Concerts
+          </a>
+        </li>
+        <li>
+          <a href="/admin/genres" class="flex items-center px-4 py-3 text-gray-500 hover:text-black hover:bg-gray-50 font-mono text-xs uppercase tracking-widest transition-colors">
+            Genres
+          </a>
+        </li>
+        <li>
+          <a href="/admin/bands" class="flex items-center px-4 py-3 text-gray-500 hover:text-black hover:bg-gray-50 font-mono text-xs uppercase tracking-widest transition-colors">
+            Groupes
+          </a>
+        </li>
+        <li>
+          <a href="/admin/users" class="flex items-center px-4 py-3 text-gray-500 hover:text-black hover:bg-gray-50 font-mono text-xs uppercase tracking-widest transition-colors">
+            Utilisateurs
+          </a>
+        </li>
+      </ul>
+
+      <div class="mt-auto border-t border-gray-200 pt-6">
+        <a href="/logout" class="flex items-center px-4 py-3 text-red-500 hover:bg-red-50 font-mono text-xs uppercase tracking-widest transition-colors">
+          Déconnexion
+        </a>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="ml-64 p-12 w-full max-w-7xl">
+    
+    <div class="mb-12">
+      <p class="font-mono text-[10px] uppercase tracking-widest text-gray-400 mb-2">Aperçu Général</p>
+      <h1 class="text-4xl font-black tracking-tight uppercase text-black">Tableau de bord</h1>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+      <div class="bg-white p-8 border border-gray-200 shadow-sm">
+        <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-4">Concerts</p>
+        <p class="text-6xl font-black tracking-tight text-black">{{countConcerts}}</p>
+      </div>
+      <div class="bg-white p-8 border border-gray-200 shadow-sm">
+        <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-4">Réservations (30j)</p>
+        <p class="text-6xl font-black tracking-tight text-black">{{countBookings}}</p>
+      </div>
+      <div class="bg-white p-8 border border-gray-200 shadow-sm">
+        <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-4">Groupes</p>
+        <p class="text-6xl font-black tracking-tight text-black">20</p>
+      </div>
+      <div class="bg-white p-8 border border-gray-200 shadow-sm md:col-span-1">
+        <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-4">Genres</p>
+        <p class="text-6xl font-black tracking-tight text-black">20</p>
+      </div>
+      <div class="bg-white p-8 border border-gray-200 shadow-sm md:col-span-2">
+        <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-4">Utilisateurs</p>
+        <p class="text-6xl font-black tracking-tight text-black">{{countUsers}}</p>
+      </div>
+    </div>
+
+    <!-- Admin Table -->
+    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
+      <div class="p-6 border-b border-black bg-black text-white">
+        <h2 class="text-lg font-bold tracking-tight uppercase">Équipe Administrative</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-left">
+          <thead class="border-b border-gray-200 bg-gray-50 font-mono text-[10px] uppercase tracking-widest text-gray-500">
+            <tr>
+              <th class="px-6 py-4 font-normal">Identifiant</th>
+              <th class="px-6 py-4 font-normal">Contact</th>
+              <th class="px-6 py-4 font-normal">Privilèges</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-100">
+            {{#each admins}}
+            <tr class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 font-bold text-sm text-black">{{username}}</td>
+              <td class="px-6 py-4 text-sm text-gray-600 font-mono">{{email}}</td>
+              <td class="px-6 py-4 text-xs font-mono uppercase tracking-widest text-black">{{role}}</td>
+            </tr>
+            {{/each}}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
