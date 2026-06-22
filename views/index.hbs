@@ -1,9 +1,14 @@
 <div class="bg-[#F8F9FA] min-h-screen font-sans text-gray-900 pb-24">
 
   <!-- HERO SECTION -->
-  <section class="relative pt-40 pb-48 px-8 flex flex-col items-center justify-center text-center overflow-hidden bg-[url('https://images.unsplash.com/photo-1540039155732-d68a9f390059?q=80&w=2938&auto=format&fit=crop')] bg-cover bg-center bg-no-repeat">
+  <section class="relative pt-40 pb-48 px-8 flex flex-col items-center justify-center text-center overflow-hidden bg-zinc-950">
+    <!-- Video Background -->
+    <video autoplay loop muted playsinline class="absolute inset-0 w-full h-full object-cover z-0 opacity-80">
+      <source src="/videos/hero-bg.mp4" type="video/mp4">
+    </video>
+
     <!-- Cinematic Overlay -->
-    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-black/30"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-zinc-950 via-zinc-950/80 to-black/30 z-0"></div>
     
     <div class="relative z-10 max-w-5xl mx-auto mt-12">
       <p class="font-mono text-xs uppercase tracking-widest text-orange-500 mb-6 drop-shadow-md">Underground Access</p>
