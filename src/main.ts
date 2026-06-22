@@ -40,7 +40,7 @@ async function bootstrap() {
       resave: false,
       saveUninitialized: false,
       store: MongoStore.create({
-        mongoUrl: process.env.MONGO_URI || 'mongodb://localhost:27017/ticketer',
+        mongoUrl: process.env.MONGODB_URI || 'mongodb://localhost:27017/ticketer',
         collectionName: 'sessions'
       }),
     }),
