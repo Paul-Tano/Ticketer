@@ -80,9 +80,7 @@ export class ConcertsController {
         day: 'numeric',
         month: 'long',
         year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-      }),
+      }) + ' à ' + (c.time || '20:00'),
     }));
 
     return res.render('concerts/index', {
@@ -118,13 +116,10 @@ export class ConcertsController {
       ...concert,
       isAlmostSoldOut,
       formattedDate: parsedDate.toLocaleDateString('fr-FR', {
-        weekday: 'long',
         day: 'numeric',
         month: 'long',
         year: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-      }),
+      }) + ' à ' + (concert.time || '20:00'),
     };
 
     let isFavorite = false;
@@ -142,9 +137,15 @@ export class ConcertsController {
   @Get('admin/concerts')
   async adminIndex(@Res() res: Response) {
     const concerts = await this.concertsService.findAll();
-    console.log(concerts);
     return res.render('admin/concerts/index', {
-      concerts: concerts,
+      concerts: concerts.map(c => ({
+        ...c,
+        date: new Date(c.date).toLocaleDateString('fr-FR', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        }) + ' à ' + (c.time || '20:00')
+      })),
       currentRouteName: 'admin',
     });
   }
@@ -200,12 +201,19 @@ export class ConcertsController {
   }
 
   // route pour vraiment modifier le concert
-  @Put('admin/concerts/:id')
+  @Post('admin/concerts/:id/update')
+  @UseInterceptors(FileInterceptor('image', multerConfig))
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateConcertDto,
     @Res() res: Response,
+    @UploadedFile() file: any,
   ) {
+    if (file) {
+      dto.image = `/uploads/concerts/${file.filename}`;
+    } else {
+      delete dto.image;
+    }
     await this.concertsService.update(id, dto);
     return res.redirect('/admin/concerts');
   }

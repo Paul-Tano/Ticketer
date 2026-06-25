@@ -62,6 +62,7 @@ export class ConcertsService {
   // Concerts entre 0 et 7 jours
   async findUrgent(limit: number = 4): Promise<ConcertDocument[]> {
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
     return await this.concertModel
       .find({
@@ -81,6 +82,7 @@ export class ConcertsService {
   // Concerts ajoutés récemment
   async findUpcoming(limit: number = 4): Promise<ConcertDocument[]> {
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     return await this.concertModel
       .find({ date: { $gte: today } })
       .sort({ _id: -1 }) // -1 for descending (newest first)
