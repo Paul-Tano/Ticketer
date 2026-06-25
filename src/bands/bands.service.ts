@@ -23,4 +23,8 @@ export class BandsService {
   async update(id: string, data: { name: string }): Promise<Band | null> {
     return this.bandModel.findByIdAndUpdate(id, data, { new: true }).exec();
   }
+
+  async remove(id: string) {
+    return this.bandModel.findByIdAndDelete(id).exec();
+  }
 }

@@ -1,0 +1,64 @@
+<div class="min-h-screen bg-[#F4F4F4] font-sans text-gray-900 flex">
+  <!-- Minimal Sidebar -->
+  <aside class="fixed top-0 left-0 z-40 w-64 h-screen bg-white border-r border-gray-200">
+    <div class="h-full px-6 py-10 flex flex-col">
+      <a href="/admin" class="mb-12">
+        <span class="text-2xl font-black tracking-tight uppercase text-black">TICKETER.</span>
+        <span class="block font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-1">Espace Admin</span>
+      </a>
+      <a href="/admin/users" class="text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-black transition-colors mb-4">
+        ← Retour aux Utilisateurs
+      </a>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="ml-64 p-12 w-full max-w-4xl">
+    <div class="mb-12">
+      <p class="font-mono text-[10px] uppercase tracking-widest text-gray-400 mb-2">Base de données</p>
+      <h1 class="text-4xl font-black tracking-tight uppercase text-black">Éditer Utilisateur</h1>
+    </div>
+
+    <div class="bg-white border border-gray-200 shadow-sm p-8">
+      <form action="/users/{{editUser._id}}/update" method="POST" class="space-y-8">
+        
+        <div class="grid grid-cols-1 gap-8">
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+            <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Nom d'utilisateur
+            </label>
+            <input type="text" name="username" value="{{editUser.username}}" required
+                   class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none">
+          </div>
+
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+            <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Email
+            </label>
+            <input type="email" name="email" value="{{editUser.email}}" required
+                   class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none">
+          </div>
+
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+            <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Rôle
+            </label>
+            <select name="role" required class="w-full text-black bg-transparent text-sm font-bold pt-6 pb-2 outline-none appearance-none cursor-pointer">
+              <option value="user" {{#if (eq editUser.role 'user')}}selected{{/if}}>Utilisateur Standard</option>
+              <option value="admin" {{#if (eq editUser.role 'admin')}}selected{{/if}}>Administrateur</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center gap-6 pt-6">
+          <button type="submit" class="bg-black text-white font-bold uppercase tracking-widest text-xs px-10 py-4 hover:bg-gray-800 transition-colors">
+            Mettre à jour
+          </button>
+          <a href="/admin/users" class="text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-black transition-colors border-b border-transparent hover:border-black pb-0.5">
+            Annuler
+          </a>
+        </div>
+      </form>
+    </div>
+  </main>
+</div>

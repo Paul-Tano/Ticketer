@@ -32,6 +32,11 @@ export class UsersService {
     return user.populate('favoritBands');
   }
 
+  async findIdsByUsername(search: string) {
+    const users = await this.userModel.find({ username: { $regex: search, $options: 'i' } }).select('_id').lean();
+    return users.map(u => u._id);
+  }
+
   findOnebyEmail(email: string) {
     const user = this.userModel.findOne({ email });
     return user;
@@ -64,6 +69,19 @@ export class UsersService {
       user.role = 'user';
     }
     return user?.save();
+  }
+
+  async toggleStatus(id: string) {
+    const user = await this.userModel.findById(id);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (user.status === 'suspended') {
+      user.status = 'active';
+    } else {
+      user.status = 'suspended';
+    }
+    return user.save();
   }
   findAdmin() {
     return this.userModel.find({ role: 'admin' });

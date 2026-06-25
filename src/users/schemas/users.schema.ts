@@ -19,6 +19,9 @@ export class User {
 
   @Prop({ type: [{ type: Types.ObjectId, ref: 'Band' }], default: [] })
   favoritBands!: Types.ObjectId[];
+
+  @Prop({ enum: ['active', 'suspended'], default: 'active' })
+  status!: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

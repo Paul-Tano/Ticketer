@@ -27,10 +27,16 @@ export class Concert {
   price!: number;
 
   @Prop({ required: true, min: 0 })
+  totalTickets!: number;
+
+  @Prop({ required: true, min: 0 })
   availableTickets!: number;
 
   @Prop({ required: true })
   image!: string;
+
+  @Prop({ required: true, default: '20:00' })
+  time!: string;
 }
 
 export const ConcertSchema = SchemaFactory.createForClass(Concert);

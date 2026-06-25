@@ -29,6 +29,10 @@ export class CreateConcertDto {
   @IsDateString()
   date!: string;
 
+  @IsNotEmpty({ message: 'Veuillez choisir une heure' })
+  @IsString()
+  time!: string;
+
   @IsNotEmpty({ message: "Veuillez entrer le lieu de l'évènement" })
   @IsString()
   location!: string;
@@ -42,6 +46,11 @@ export class CreateConcertDto {
   @IsNumber()
   @Min(0)
   availableTickets!: number;
+
+  @IsNotEmpty({ message: 'Veuillez entrer le nombre total de ticket' })
+  @IsNumber()
+  @Min(0)
+  totalTickets!: number;
 
   @IsOptional()
   @IsString()

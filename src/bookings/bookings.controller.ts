@@ -64,16 +64,45 @@ export class BookingsController {
   @UseGuards(AuthenticatedGuard)
   @UseGuards(AdminGuard)
   @Get('/admin/bookings')
-  async findAll(@Res() res: Response) {
-    const bookings = await this.bookingsService.findAll();
-    bookings.map((booking) => {
-      booking.created_at?.toLocaleDateString();
+  async findAll(@Request() req: ExpressRequest, @Res() res: Response) {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = 10;
+    const search = req.query.search as string || '';
+
+    const result = await this.bookingsService.findAll(page, limit, search);
+    
+    const formattedBookings = result.bookings.map((b) => {
+      const plain = b.toObject() as any;
+      const dateVal = plain.createdAt || plain.created_at;
+      plain.formattedDate = dateVal ? new Date(dateVal).toLocaleDateString('fr-FR', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      }) : 'Inconnue';
+      return plain;
     });
-    console.log(bookings);
+    
+    // Create an array of pages for pagination
+    const pages = Array.from({ length: result.totalPages }, (_, i) => i + 1);
+
     return res.render('admin/bookings/index', {
-      bookings: bookings.map((booking) => booking.toObject()),
-      currentRouteName: 'login',
+      bookings: formattedBookings,
+      currentPage: result.page,
+      totalPages: result.totalPages,
+      pages,
+      search,
+      currentRouteName: 'admin',
     });
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @UseGuards(AdminGuard)
+  @Post('/admin/bookings/:id/delete')
+  async removeBooking(@Param('id') id: string, @Res() res: Response) {
+    await this.bookingsService.remove(id);
+    return res.redirect('/admin/bookings');
   }
   @UseGuards(AuthenticatedGuard)
   @Get('/bookings/:id')

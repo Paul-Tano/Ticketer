@@ -5,19 +5,11 @@
     <aside class="w-full md:w-80 flex-shrink-0">
       <div class="bg-white p-8 shadow-2xl shadow-orange-500/5 border-t-8 border-orange-500 rounded-b-md">
         
-        <!-- Profile Pic -->
-        <div class="mb-8">
-          <div class="w-24 h-24 border border-gray-200 p-1 bg-[#F8F9FA] rounded-full overflow-hidden shadow-sm">
-            <img src="https://ui-avatars.com/api/?name={{user.firstname}}+{{user.lastname}}&background=ea580c&color=fff&rounded=true&size=200" 
-                 class="w-full h-full object-cover" alt="Profile">
-          </div>
-        </div>
-
         <!-- Info -->
-        <div class="mb-8 border-b border-gray-200 pb-8">
-          <p class="font-mono text-[10px] uppercase tracking-widest text-orange-600 mb-1">Identité</p>
-          <h2 class="text-3xl font-black tracking-tight uppercase text-black mb-1 drop-shadow-sm">{{user.firstname}} {{user.lastname}}</h2>
-          <p class="font-mono text-xs text-gray-500">{{user.email}}</p>
+        <div class="mb-8 border-b border-gray-200 pb-8 relative group">
+          <p class="font-mono text-[10px] uppercase tracking-widest text-orange-600 mb-1">Identité <span class="text-[9px] text-gray-400 normal-case ml-2 opacity-0 group-hover:opacity-100 transition-opacity">(Cliquez pour modifier)</span></p>
+          <h2 id="inline-username" contenteditable="true" spellcheck="false" class="text-3xl font-black tracking-tight uppercase text-black mb-1 drop-shadow-sm outline-none focus:border-b-2 focus:border-orange-500 focus:bg-orange-50 focus:text-orange-600 transition-colors hover:bg-gray-50 p-1 -ml-1 rounded-sm cursor-text">{{user.username}}</h2>
+          <p id="inline-email" contenteditable="true" spellcheck="false" class="font-mono text-xs text-gray-500 outline-none focus:border-b-2 focus:border-orange-500 focus:bg-orange-50 focus:text-orange-600 transition-colors hover:bg-gray-50 p-1 -ml-1 rounded-sm cursor-text">{{user.email}}</p>
         </div>
         
         <!-- Actions -->
@@ -42,7 +34,7 @@
       <!-- Greeting -->
       <div class="bg-transparent pt-4">
         <p class="font-mono text-[10px] uppercase tracking-widest text-orange-600 mb-2 drop-shadow-sm">Tableau de bord</p>
-        <h1 class="text-5xl font-black tracking-tight uppercase text-black drop-shadow-sm">Bonjour, {{user.firstname}}.</h1>
+        <h1 class="text-5xl font-black tracking-tight uppercase text-black drop-shadow-sm">Bonjour, <span id="greeting-name">{{user.username}}</span>.</h1>
       </div>
 
       <!-- Favorites -->
@@ -52,16 +44,16 @@
         </div>
         
         <div class="divide-y divide-gray-100">
-          {{#each user.favoriteBands}}
+          {{#each user.favoritBands}}
           <div class="p-8 flex items-center justify-between hover:bg-gray-50 transition-colors group">
             <div class="flex items-center gap-6">
               <!-- Minimal abstract initial box -->
               <div class="w-16 h-16 bg-[#F8F9FA] border border-gray-200 flex items-center justify-center text-orange-600 font-black text-2xl uppercase group-hover:border-orange-500 group-hover:shadow-md transition-all rounded-sm">
-                {{this.[0]}}
+                {{this.name.[0]}}
               </div>
               <div>
                 <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-1 group-hover:text-orange-500 transition-colors">Artiste</p>
-                <h4 class="font-black text-lg uppercase tracking-tight text-black group-hover:text-orange-600 transition-colors">{{this}}</h4>
+                <h4 class="font-black text-lg uppercase tracking-tight text-black group-hover:text-orange-600 transition-colors">{{this.name}}</h4>
               </div>
             </div>
             
@@ -83,3 +75,71 @@
     </main>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const inlineUsername = document.getElementById('inline-username');
+    const inlineEmail = document.getElementById('inline-email');
+    
+    // Original values to prevent unnecessary requests
+    let origUsername = inlineUsername ? inlineUsername.innerText.trim() : '';
+    let origEmail = inlineEmail ? inlineEmail.innerText.trim() : '';
+
+    function saveField(field, key, origValue) {
+      const newValue = field.innerText.trim();
+      
+      // If nothing changed, do nothing
+      if (newValue === origValue) return;
+
+      // Make a PATCH request to update the profile
+      fetch('/profile', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ [key]: newValue })
+      })
+      .then(res => {
+        if (!res.ok) {
+          console.error("Erreur lors de la sauvegarde.");
+          field.classList.add('text-red-500');
+          setTimeout(() => field.classList.remove('text-red-500'), 2000);
+        } else {
+          // Success indicator
+          field.classList.add('text-green-600');
+          setTimeout(() => field.classList.remove('text-green-600'), 2000);
+          
+          if(key === 'username') {
+             const greeting = document.getElementById('greeting-name');
+             if(greeting) greeting.innerText = newValue;
+             origUsername = newValue; // update orig
+          } else if (key === 'email') {
+             origEmail = newValue; // update orig
+          }
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        field.classList.add('text-red-500');
+        setTimeout(() => field.classList.remove('text-red-500'), 2000);
+      });
+    }
+
+    [inlineUsername, inlineEmail].forEach(el => {
+      if(!el) return;
+      el.addEventListener('blur', function() {
+        const key = this.id === 'inline-username' ? 'username' : 'email';
+        const origValue = key === 'username' ? origUsername : origEmail;
+        saveField(this, key, origValue);
+      });
+      
+      // Save on enter
+      el.addEventListener('keydown', function(e) {
+        if(e.key === 'Enter') {
+          e.preventDefault(); 
+          this.blur(); // Trigger blur to save
+        }
+      });
+    });
+  });
+</script>

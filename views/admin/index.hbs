@@ -5,13 +5,13 @@
     <div class="h-full px-6 py-10 overflow-y-auto flex flex-col">
       <a href="/" class="mb-12">
         <span class="text-2xl font-black tracking-tight uppercase text-black">TICKETER.</span>
-        <span class="block font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-1">Admin Panel</span>
+        <span class="block font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-1">Espace Admin</span>
       </a>
       
       <ul class="space-y-2 flex-1">
         <li>
           <a href="/admin" class="flex items-center px-4 py-3 bg-black text-white font-mono text-xs uppercase tracking-widest transition-colors">
-            <span class="w-2 h-2 bg-white mr-3"></span> Dashboard
+            <span class="w-2 h-2 bg-white mr-3"></span> Tableau de bord
           </a>
         </li>
         <li>
@@ -69,11 +69,11 @@
       </div>
       <div class="bg-white p-8 border border-gray-200 shadow-sm">
         <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-4">Groupes</p>
-        <p class="text-6xl font-black tracking-tight text-black">20</p>
+        <p class="text-6xl font-black tracking-tight text-black">{{countBands}}</p>
       </div>
       <div class="bg-white p-8 border border-gray-200 shadow-sm md:col-span-1">
         <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-4">Genres</p>
-        <p class="text-6xl font-black tracking-tight text-black">20</p>
+        <p class="text-6xl font-black tracking-tight text-black">{{countGenres}}</p>
       </div>
       <div class="bg-white p-8 border border-gray-200 shadow-sm md:col-span-2">
         <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-4">Utilisateurs</p>

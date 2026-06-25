@@ -61,4 +61,10 @@ export class GenreController {
     };
   }
 
+  @UseGuards(AuthenticatedGuard, AdminGuard)
+  @Post('delete/:id')
+  async remove(@Param('id') id: string, @Res() res: Response) {
+    await this.genresService.remove(id);
+    return res.redirect('/admin/genres');
+  }
 }

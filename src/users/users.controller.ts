@@ -31,8 +31,8 @@ export class UsersController {
     const fUser = await this.usersService.findOne(user._id);
 
     return {
-      user: fUser,
-      countFasvs: fUser?.favoritBands?.length || 0,
+      user: fUser ? JSON.parse(JSON.stringify(fUser)) : null,
+      countFavs: fUser?.favoritBands?.length || 0,
     };
   }
 
@@ -44,7 +44,7 @@ export class UsersController {
     const fUser = await this.usersService.findOne(user._id);
 
     return {
-      user: fUser,
+      user: fUser ? JSON.parse(JSON.stringify(fUser)) : null,
     };
   }
 
@@ -89,19 +89,45 @@ export class UsersController {
     @Res() res: Response
   ) {
     const user = req.user as User;
+    
+    // If user wants to change password, verify old password
+    if (body.password && body.password.trim() !== '') {
+      const fUser = await this.usersService.findOne(user._id);
+      if (!fUser) {
+         return res.status(404).send('User not found');
+      }
+      const bcrypt = require('bcrypt'); // Import here or at top
+      const isMatch = await bcrypt.compare(body.oldPassword || '', fUser.password);
+      
+      if (!isMatch) {
+        return res.render('profile/edit', {
+          user: fUser,
+          error: "L'ancien mot de passe est incorrect"
+        });
+      }
+    }
+
     await this.usersService.update(user._id, body);
     return res.redirect('/users/profile');
   }
 
   @UseGuards(AuthenticatedGuard, AdminGuard)
-  @Get()
-  async findAll(@Res() res: Response) {
-    const users = await this.usersService.findAll();
-    console.log(users);
-    return res.render('admin/users/index', {
-      currentRouteName: 'admin',
-      users: users.map((user) => user.toObject()),
-    });
+  @Get(':id/edit')
+  async editForm(@Param('id') id: string, @Res() res: Response) {
+    const user = await this.usersService.findOne(id);
+    return res.render('admin/users/edit', { editUser: user, currentRouteName: 'admin' });
+  }
+
+  @UseGuards(AuthenticatedGuard, AdminGuard)
+  @Post(':id/update')
+  @UseInterceptors(NoFilesInterceptor())
+  async updateUser(
+    @Param('id') id: string,
+    @Body() body: any,
+    @Res() res: Response
+  ) {
+    await this.usersService.update(id, body);
+    return res.redirect('/admin/users');
   }
 
   @UseGuards(AuthenticatedGuard, AdminGuard)
@@ -116,7 +142,15 @@ export class UsersController {
   async switchRole(@Body('id') userId: string, @Res() res: Response) {
     console.log(userId);
     await this.usersService.switchRole(userId);
-    return res.redirect('/users');
+    return res.redirect('/admin/users');
+  }
+
+  //users/status *for switch status*
+  @UseGuards(AuthenticatedGuard, AdminGuard)
+  @Post('/status')
+  async switchStatus(@Body('id') userId: string, @Res() res: Response) {
+    await this.usersService.toggleStatus(userId);
+    return res.redirect('/admin/users');
   }
 
   //users/add-to-fav *for switch role*
@@ -138,11 +172,11 @@ export class UsersController {
 
   //delete a specifique user
   @UseGuards(AuthenticatedGuard, AdminGuard)
-  @Post('/delete')
+  @Post('/delete/:id')
   @UseInterceptors(NoFilesInterceptor())
-  async remove(@Body('id') userId: string, @Res() res: Response) {
+  async remove(@Param('id') userId: string, @Res() res: Response) {
     console.log(userId);
     await this.usersService.remove(userId);
-    return res.redirect('/users');
+    return res.redirect('/admin/users');
   }
 }

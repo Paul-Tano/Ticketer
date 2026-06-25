@@ -25,6 +25,9 @@ export class UpdateConcertDto extends PartialType(CreateConcertDto) {
   date?: string;
 
   @IsString()
+  time?: string;
+
+  @IsString()
   location?: string;
 
   @IsNumber()
@@ -34,6 +37,10 @@ export class UpdateConcertDto extends PartialType(CreateConcertDto) {
   @IsNumber()
   @Min(0)
   availableTickets?: number;
+
+  @IsNumber()
+  @Min(0)
+  totalTickets?: number;
 
   @IsString()
   image?: string;

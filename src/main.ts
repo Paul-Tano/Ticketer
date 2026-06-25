@@ -4,28 +4,31 @@ import { NestExpressApplication } from '@nestjs/platform-express';
 import { join } from 'path';
 import { engine } from 'express-handlebars';
 import * as Handlebars from 'handlebars';
+import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access';
 import { ValidationPipe } from '@nestjs/common';
 import session from 'express-session';
 import passport from 'passport';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
-  Handlebars.registerHelper('eq', function (a, b) {
-    return a?.toString() === b?.toString();
-  });
-  Handlebars.registerHelper('isNot', (a, b) => a !== b);
-  Handlebars.registerHelper('or', (a, b) => a || b);
-  Handlebars.registerHelper('and', (a, b) => a && b);
-  Handlebars.registerHelper('and', function (...args) {
-    args.pop(); // retire options
-    return args.every(Boolean);
-  });
   app.engine(
     'hbs',
     engine({
       extname: '.hbs',
       defaultLayout: 'main',
       layoutsDir: join(__dirname, '..', 'views/layouts'),
+      handlebars: allowInsecurePrototypeAccess(Handlebars),
+      helpers: {
+        eq: function (a, b) {
+          return a?.toString() === b?.toString();
+        },
+        isNot: (a, b) => a !== b,
+        or: (a, b) => a || b,
+        and: function (...args) {
+          args.pop(); // retire options
+          return args.every(Boolean);
+        }
+      }
     }),
   );
 

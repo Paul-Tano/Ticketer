@@ -40,12 +40,15 @@ const multerConfig = {
   }),
 };
 
+import { UsersService } from '../users/users.service';
+
 @Controller()
 export class ConcertsController {
   constructor(
     private readonly concertsService: ConcertsService,
     private readonly genresService: GenresService,
     private readonly bandsService: BandsService,
+    private readonly usersService: UsersService,
   ) {}
 
   // route pour voir tous les concerts
@@ -105,11 +108,16 @@ export class ConcertsController {
 
   // route pour voir un concert
   @Get('concerts/:id')
-  async findOne(@Param('id') id: string, @Res() res: Response) {
+  async findOne(@Param('id') id: string, @Res() res: Response, @Req() req: any) {
     const concert = await this.concertsService.findOne(id);
+    const isAlmostSoldOut = concert.availableTickets > 0 && concert.totalTickets > 0 && (concert.availableTickets < concert.totalTickets * 0.20);
+    let parsedDate = new Date(concert.date);
+    if (isNaN(parsedDate.getTime())) parsedDate = new Date(); // fallback
+
     const formattedConcert = {
       ...concert,
-      formattedDate: new Date(concert.date).toLocaleDateString('fr-FR', {
+      isAlmostSoldOut,
+      formattedDate: parsedDate.toLocaleDateString('fr-FR', {
         weekday: 'long',
         day: 'numeric',
         month: 'long',
@@ -118,7 +126,16 @@ export class ConcertsController {
         minute: 'numeric',
       }),
     };
-    return res.render('concerts/detail', { concert: formattedConcert });
+
+    let isFavorite = false;
+    if (req.user) {
+      const fullUser = await this.usersService.findOne(req.user._id);
+      if (fullUser && fullUser.favoritBands && fullUser.favoritBands.some((b: any) => b.toString() === concert.band_id._id.toString() || b._id?.toString() === concert.band_id._id.toString())) {
+        isFavorite = true;
+      }
+    }
+
+    return res.render('concerts/detail', { concert: formattedConcert, isFavorite, user: req.user });
   }
 
   // route de l'admin pour que il puisse voir tous les concerts
@@ -159,7 +176,16 @@ export class ConcertsController {
   @Get('admin/concerts/:id/edit')
   async editForm(@Param('id') id: string, @Res() res: Response) {
     const concert = await this.concertsService.findOne(id);
-    return res.render('admin/concerts/edit', { concert });
+    if (concert && concert.date) {
+      let parsedDate = new Date(concert.date);
+      if (!isNaN(parsedDate.getTime())) {
+        // @ts-ignore
+        concert.formattedDateInput = parsedDate.toISOString().split('T')[0];
+      }
+    }
+    const genres = await this.genresService.findAll();
+    const bands = await this.bandsService.findAll();
+    return res.render('admin/concerts/edit', { concert, currentRouteName: 'admin', genres, bands });
   }
 
   // route pour vraiment modifier le concert

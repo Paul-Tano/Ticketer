@@ -8,10 +8,13 @@ import { ConcertsService } from './concerts.service';
 import { BandsService } from 'src/bands/bands.service';
 import { GenresService } from 'src/genres/genres.service';
 
+import { UsersModule } from 'src/users/users.module';
+
 @Module({
   imports: [
     GenreModule,
     BandsModule,
+    UsersModule,
     MongooseModule.forFeature([{ name: Concert.name, schema: ConcertSchema }]),
   ],
   controllers: [ConcertsController],

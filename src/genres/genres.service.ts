@@ -25,4 +25,8 @@ export class GenresService {
   async findById(id: string): Promise<Genre | null> {
     return this.genreModel.findById(id).exec();
   }
+
+  async remove(id: string) {
+    return this.genreModel.findByIdAndDelete(id).exec();
+  }
 }

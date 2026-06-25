@@ -5,13 +5,13 @@
     <div class="h-full px-6 py-10 overflow-y-auto flex flex-col">
       <a href="/" class="mb-12">
         <span class="text-2xl font-black tracking-tight uppercase text-black">TICKETER.</span>
-        <span class="block font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-1">Admin Panel</span>
+        <span class="block font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-1">Espace Admin</span>
       </a>
       
       <ul class="space-y-2 flex-1">
         <li>
           <a href="/admin" class="flex items-center px-4 py-3 text-gray-500 hover:text-black hover:bg-gray-50 font-mono text-xs uppercase tracking-widest transition-colors">
-            Dashboard
+            Tableau de bord
           </a>
         </li>
         <li>
@@ -74,15 +74,17 @@
           </thead>
           <tbody class="divide-y divide-gray-100">
             {{#each genres}}
-            <tr class="hover:bg-gray-50 transition-colors">
+            <tr class="hover:bg-gray-50 transition-colors group">
               <td class="px-6 py-4">
-                <p class="font-bold text-sm text-black">{{name}}</p>
+                <form action="/admin/genres/update/{{_id}}" method="POST" class="inline-edit-form m-0">
+                  <input type="text" name="name" value="{{name}}" class="font-bold text-sm text-black bg-transparent border-b border-transparent hover:border-gray-300 focus:border-black focus:outline-none transition-colors px-2 py-1 w-full max-w-sm" title="Cliquez pour modifier">
+                </form>
               </td>
               <td class="px-6 py-4 text-right">
-                <div class="flex items-center justify-end gap-3">
-                  <a href="/admin/genres/edit?id={{_id}}" class="text-[10px] font-mono uppercase tracking-widest text-black hover:bg-gray-100 border border-transparent hover:border-gray-300 px-3 py-1 transition-colors">
-                    Éditer
-                  </a>
+                <div class="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button type="button" class="delete-btn text-[10px] font-mono uppercase tracking-widest text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 px-3 py-1 transition-colors" data-action="/admin/genres/delete/{{_id}}">
+                    Supprimer
+                  </button>
                 </div>
               </td>
             </tr>
@@ -94,3 +96,21 @@
 
   </main>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.inline-edit-form input').forEach(input => {
+      // Submit on blur if changed
+      input.addEventListener('blur', () => {
+        if(input.defaultValue !== input.value) input.form.submit();
+      });
+      // Submit on Enter key
+      input.addEventListener('keydown', (e) => { 
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          input.blur(); // Triggers the blur event which submits
+        }
+      });
+    });
+  });
+</script>

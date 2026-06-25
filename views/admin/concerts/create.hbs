@@ -4,7 +4,7 @@
     <div class="h-full px-6 py-10 flex flex-col">
       <a href="/admin" class="mb-12">
         <span class="text-2xl font-black tracking-tight uppercase text-black">TICKETER.</span>
-        <span class="block font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-1">Admin Panel</span>
+        <span class="block font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-1">Espace Admin</span>
       </a>
       <a href="/admin/concerts" class="text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-black transition-colors mb-4">
         ← Retour aux Concerts
@@ -20,7 +20,7 @@
     </div>
 
     <div class="bg-white border border-gray-200 shadow-sm p-8">
-      <form action="/admin/concerts/create" method="POST" enctype="multipart/form-data" class="space-y-8">
+      <form action="/admin/concerts" method="POST" enctype="multipart/form-data" class="space-y-8">
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2 md:col-span-2">
@@ -35,7 +35,7 @@
             <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
               Artiste / Groupe
             </label>
-            <select name="band_id" required class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none appearance-none cursor-pointer">
+            <select name="band_id" required class="w-full text-black bg-transparent text-sm font-bold pt-6 pb-2 outline-none appearance-none cursor-pointer">
               <option value="">Sélectionner</option>
               {{#each bands}}
                 <option value="{{this._id}}">{{this.name}}</option>
@@ -47,7 +47,7 @@
             <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
               Genre
             </label>
-            <select name="genre_id" required class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none appearance-none cursor-pointer">
+            <select name="genre_id" required class="w-full text-black bg-transparent text-sm font-bold pt-6 pb-2 outline-none appearance-none cursor-pointer">
               <option value="">Sélectionner</option>
               {{#each genres}}
                 <option value="{{this._id}}">{{this.name}}</option>
@@ -63,7 +63,7 @@
                    class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none">
           </div>
 
-          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2 md:col-span-1">
             <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
               Date
             </label>
@@ -71,11 +71,27 @@
                    class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none">
           </div>
 
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2 md:col-span-1">
+            <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Heure de début
+            </label>
+            <input type="time" name="time" required value="20:00"
+                   class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none">
+          </div>
+
           <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
             <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
-              Prix du billet (€)
+              Prix du billet (FCFA)
             </label>
             <input type="number" name="price" required placeholder="Ex: 45"
+                   class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none">
+          </div>
+
+          <div class="border-b border-gray-200 focus-within:border-black transition-colors relative pb-2">
+            <label class="absolute top-0 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-400">
+              Total des billets
+            </label>
+            <input type="number" name="totalTickets" required placeholder="Ex: 5000"
                    class="w-full bg-transparent text-sm font-bold pt-6 pb-2 outline-none">
           </div>
 

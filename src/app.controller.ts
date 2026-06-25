@@ -23,6 +23,7 @@ import {
   Request,
   UseGuards,
   UseInterceptors,
+  Param,
 } from '@nestjs/common';
 import { BookingsService } from './bookings/bookings.service';
 import { GenresService } from './genres/genres.service';
@@ -45,14 +46,21 @@ export class AppController {
   async home(@Request() req: ExpressRequest, @Res() res: Response) {
     console.log("req.session ID: ", req.sessionID);
     console.log("req.user in home: ", req.user ? 'exists' : 'undefined');
-    const urgentConcerts = await this.concertsService.findAll();
-    const upcomingConcerts = await this.concertsService.findAll();
-    // const allBands = await this.BandsService.findAll();
+    const urgentConcerts = await this.concertsService.findUrgent(4);
+    const upcomingConcerts = await this.concertsService.findUpcoming(4);
+    const allBands = await this.bandsService.findAll();
     //const allGenres = await this.GenresService.findAll();
     return res.render('index', {
-      urgentConcerts: urgentConcerts.slice(0, 3).map((c) => ({
+      urgentConcerts: urgentConcerts.map((c) => ({
         ...c,
         isSoldOut: c.availableTickets === 0,
+        formattedDate: new Date(c.date).toLocaleDateString('fr-FR', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+        }),
       })),
       upcomingConcerts: upcomingConcerts.map((c) => ({
         ...c,
@@ -64,7 +72,7 @@ export class AppController {
           minute: 'numeric',
         }),
       })),
-      // allBands: allBands,
+      allBands: allBands.map(b => b.toObject()),
       // allGenres: allGenres,
     });
   }
@@ -125,6 +133,13 @@ export class AppController {
       const error = 'email or password incorrect';
       return res.render('auth/login', {
         error: error,
+        currentRouteName: 'login',
+      });
+    }
+
+    if (user.status === 'suspended') {
+      return res.render('auth/login', {
+        error: 'Votre compte a été suspendu.',
         currentRouteName: 'login',
       });
     }
@@ -198,17 +213,72 @@ export class AppController {
   async dashbord(@Res() res: Response) {
     const admins = await this.usersService.findAdmin();
     const countUsers = await this.usersService.findAll().countDocuments();
-    const countBookings = await this.bookingsService.findAll().countDocuments();
+    const countBookings = await this.bookingsService.countAll();
     const countConcerts = await this.concertsService.countAllConcert();
-    // const countGenres = await this.genresService.findAll().countDocuments();
-    // const countBands = await this.bandsService.findAll().countDocuments();
+    const allGenres = await this.genresService.findAll();
+    const countGenres = allGenres.length;
+    const allBands = await this.bandsService.findAll();
+    const countBands = allBands.length;
     console.log(admins);
     return res.render('admin/index', {
       admins: admins.map((admin) => admin.toObject()),
       countBookings: countBookings,
       countUsers: countUsers,
       countConcerts: countConcerts,
+      countGenres: countGenres,
+      countBands: countBands,
       currentRouteName: 'admin',
+    });
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @UseGuards(AdminGuard)
+  @Get('/admin/users')
+  async adminUsers(@Res() res: Response) {
+    const users = await this.usersService.findAll();
+    return res.render('admin/users/index', {
+      currentRouteName: 'admin',
+      users: users.map((user) => user.toObject()),
+    });
+  }
+
+  // Public routes for artistes (bands)
+  @Get('/artistes')
+  async allArtistes(@Res() res: Response) {
+    const bands = await this.bandsService.findAll();
+    return res.render('bands/index', {
+      bands: bands.map((b) => b.toObject()),
+      currentRouteName: 'artistes',
+    });
+  }
+
+  @Get('/artistes/:id')
+  async artisteDetail(@Param('id') id: string, @Res() res: Response) {
+    const band = await this.bandsService.findOne(id);
+    if (!band) {
+      return res.redirect('/artistes');
+    }
+    
+    // Find all concerts for this band
+    // Wait, ConcertsService doesn't have a findByBandId method, let's use the schema directly or add one.
+    // Instead of using ConcertsService directly, let's fetch using mongoose if not available, or I'll add the method to ConcertsService later.
+    // For now, let's call a method findByBandId that we will implement next.
+    const concerts = await this.concertsService.findByBandId(id);
+    
+    return res.render('bands/detail', {
+      band: band.toObject(),
+      concerts: concerts.map((c) => ({
+        ...c,
+        isSoldOut: c.availableTickets === 0,
+        formattedDate: new Date(c.date).toLocaleDateString('fr-FR', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+        }),
+      })),
+      currentRouteName: 'artistes',
     });
   }
 }

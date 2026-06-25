@@ -5,13 +5,13 @@
     <div class="h-full px-6 py-10 overflow-y-auto flex flex-col">
       <a href="/" class="mb-12">
         <span class="text-2xl font-black tracking-tight uppercase text-black">TICKETER.</span>
-        <span class="block font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-1">Admin Panel</span>
+        <span class="block font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-1">Espace Admin</span>
       </a>
       
       <ul class="space-y-2 flex-1">
         <li>
           <a href="/admin" class="flex items-center px-4 py-3 text-gray-500 hover:text-black hover:bg-gray-50 font-mono text-xs uppercase tracking-widest transition-colors">
-            Dashboard
+            Tableau de bord
           </a>
         </li>
         <li>
@@ -57,10 +57,19 @@
         <p class="font-mono text-[10px] uppercase tracking-widest text-gray-400 mb-2">Logs de transactions</p>
         <h1 class="text-4xl font-black tracking-tight uppercase text-black">Réservations</h1>
       </div>
+      
+      <!-- Search Form -->
+      <form action="/admin/bookings" method="GET" class="flex items-center gap-2">
+        <input type="text" name="search" value="{{search}}" placeholder="Rechercher (Utilisateur, Concert...)" class="border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:border-black w-64">
+        <button type="submit" class="bg-black text-white px-4 py-2 text-sm font-bold uppercase tracking-widest hover:bg-gray-800 transition-colors">Chercher</button>
+        <a href="/admin/bookings" class="border border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2 text-sm font-bold uppercase tracking-widest transition-colors inline-flex items-center" title="Rafraîchir">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        </a>
+      </form>
     </div>
 
     <!-- Bookings Table -->
-    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden">
+    <div class="bg-white border border-gray-200 shadow-sm overflow-hidden mb-8">
       <div class="overflow-x-auto">
         <table class="w-full text-left">
           <thead class="border-b border-gray-200 bg-gray-50 font-mono text-[10px] uppercase tracking-widest text-gray-500">
@@ -68,11 +77,12 @@
               <th class="px-6 py-4 font-normal">Utilisateur</th>
               <th class="px-6 py-4 font-normal">Concert</th>
               <th class="px-6 py-4 font-normal">Date d'achat</th>
+              <th class="px-6 py-4 font-normal text-right">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-100">
             {{#each bookings}}
-            <tr class="hover:bg-gray-50 transition-colors">
+            <tr class="hover:bg-gray-50 transition-colors group">
               <td class="px-6 py-4">
                 <p class="font-bold text-sm text-black">{{user_id.username}}</p>
               </td>
@@ -80,7 +90,18 @@
                 <p class="text-sm text-gray-600 font-medium">{{concert_id.title}}</p>
               </td>
               <td class="px-6 py-4">
-                <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500">{{created_at}}</p>
+                <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500">{{formattedDate}}</p>
+              </td>
+              <td class="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                <button type="button" class="delete-btn text-red-600 hover:text-red-800 font-mono text-[10px] uppercase tracking-widest px-3 py-1 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors rounded-sm" data-action="/admin/bookings/{{_id}}/delete">
+                  Annuler
+                </button>
+              </td>
+            </tr>
+            {{else}}
+            <tr>
+              <td colspan="4" class="px-6 py-12 text-center text-gray-500 font-mono text-xs uppercase tracking-widest">
+                Aucune réservation trouvée.
               </td>
             </tr>
             {{/each}}
@@ -88,6 +109,19 @@
         </table>
       </div>
     </div>
+
+    <!-- Pagination -->
+    {{#if totalPages}}
+    <div class="flex justify-center gap-2">
+      {{#each pages}}
+        <a href="/admin/bookings?page={{this}}{{#if ../search}}&search={{../search}}{{/if}}" 
+           class="w-8 h-8 flex items-center justify-center border text-sm font-bold transition-colors
+           {{#isNot this ../currentPage}}bg-white border-gray-200 text-gray-600 hover:border-black{{else}}bg-black border-black text-white{{/isNot}}">
+          {{this}}
+        </a>
+      {{/each}}
+    </div>
+    {{/if}}
 
   </main>
 </div>

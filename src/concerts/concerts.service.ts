@@ -59,6 +59,38 @@ export class ConcertsService {
       .exec();
   }
 
+  // Concerts entre 0 et 7 jours
+  async findUrgent(limit: number = 4): Promise<ConcertDocument[]> {
+    const today = new Date();
+    const nextWeek = new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000);
+    return await this.concertModel
+      .find({
+        date: {
+          $gte: today,
+          $lte: nextWeek,
+        },
+      })
+      .sort({ date: 1 })
+      .limit(limit)
+      .populate('band_id', 'name')
+      .populate('genre_id', 'name')
+      .lean()
+      .exec();
+  }
+
+  // Concerts ajoutés récemment
+  async findUpcoming(limit: number = 4): Promise<ConcertDocument[]> {
+    const today = new Date();
+    return await this.concertModel
+      .find({ date: { $gte: today } })
+      .sort({ _id: -1 }) // -1 for descending (newest first)
+      .limit(limit)
+      .populate('band_id', 'name')
+      .populate('genre_id', 'name')
+      .lean()
+      .exec();
+  }
+
   countAllConcert() {
     return this.concertModel.countDocuments();
   }
@@ -77,6 +109,21 @@ export class ConcertsService {
       );
     }
     return concert;
+  }
+
+  // Récupérer les concerts d'un groupe
+  async findByBandId(bandId: string): Promise<ConcertDocument[]> {
+    return await this.concertModel
+      .find({ band_id: bandId })
+      .populate('genre_id', 'name')
+      .sort({ date: 1 })
+      .lean()
+      .exec();
+  }
+
+  async findIdsByTitle(search: string) {
+    const concerts = await this.concertModel.find({ title: { $regex: search, $options: 'i' } }).select('_id').lean();
+    return concerts.map(c => c._id);
   }
 
   // Créer un concert
@@ -132,6 +179,24 @@ export class ConcertsService {
       .findByIdAndUpdate(
         id,
         { $inc: { availableTickets: -ticketCount } },
+        { new: true },
+      )
+      .exec();
+
+    if (!concert) {
+      throw new NotFoundException(
+        `Le concert avec l'id ${id} n'a pas été trouvé`,
+      );
+    }
+    return concert;
+  }
+
+  // Augmenter le nbr de tickets disponible (annulation)
+  async incrementTickets(id: string, ticketCount: number): Promise<ConcertDocument> {
+    const concert = await this.concertModel
+      .findByIdAndUpdate(
+        id,
+        { $inc: { availableTickets: ticketCount } },
         { new: true },
       )
       .exec();

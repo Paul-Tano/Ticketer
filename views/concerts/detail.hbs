@@ -15,19 +15,28 @@
       <div class="bg-transparent pt-4">
         <p class="font-mono text-xs uppercase tracking-widest text-orange-600 mb-4 drop-shadow-sm">{{concert.genre_id.name}}</p>
         <h1 class="text-6xl md:text-7xl font-black tracking-tight leading-[0.9] mb-4 uppercase text-black">{{concert.title}}</h1>
-        <p class="text-xl font-medium text-gray-600">Live set by <span class="text-black font-bold">{{concert.band_id.name}}</span></p>
+        <div class="flex items-center gap-4">
+          <p class="text-xl font-medium text-gray-600">En concert live avec <span class="text-black font-bold">{{concert.band_id.name}}</span></p>
+          {{#if user}}
+            <button class="fav-btn flex items-center justify-center p-2 rounded-full border border-gray-200 hover:bg-orange-50 transition-colors {{#if isFavorite}}text-orange-600 bg-orange-50 border-orange-200{{else}}text-gray-400{{/if}}" data-band-id="{{concert.band_id._id}}">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="{{#if isFavorite}}currentColor{{else}}none{{/if}}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+            </button>
+          {{/if}}
+        </div>
       </div>
 
       <!-- Info Grid -->
       <div class="border-t border-gray-200 pt-8">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
           <div>
-            <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-2 flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-orange-500"></i> When</p>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-2 flex items-center gap-2"><i data-lucide="calendar" class="w-4 h-4 text-orange-500"></i> Date & Heure</p>
             <p class="text-lg font-bold tracking-tight text-black">{{concert.formattedDate}}</p>
           </div>
           
           <div>
-            <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-2 flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-orange-500"></i> Where</p>
+            <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-2 flex items-center gap-2"><i data-lucide="map-pin" class="w-4 h-4 text-orange-500"></i> Lieu</p>
             <p class="text-lg font-bold tracking-tight text-black">{{concert.location}}</p>
           </div>
         </div>
@@ -35,7 +44,7 @@
 
       <!-- Description Block -->
       <div class="border-t border-gray-200 pt-8">
-        <h2 class="font-mono text-[10px] uppercase tracking-widest text-orange-600 mb-6">About the event</h2>
+        <h2 class="font-mono text-[10px] uppercase tracking-widest text-orange-600 mb-6">À propos de l'événement</h2>
         <div class="prose prose-lg text-gray-600 leading-relaxed">
           <p>{{concert.description}}</p>
         </div>
@@ -48,7 +57,7 @@
       <div class="sticky top-[100px] bg-white/90 backdrop-blur-2xl border border-gray-200 p-8 shadow-2xl shadow-orange-500/10 rounded-xl">
         
         <div class="mb-8">
-          <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-2">Admission</p>
+          <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-2">Entrée</p>
           <!-- Massive Price -->
           <div class="text-5xl font-black tracking-tighter text-orange-600 drop-shadow-sm">{{concert.price}} <span class="text-lg font-bold tracking-normal text-gray-400">FCFA</span></div>
         </div>
@@ -58,22 +67,10 @@
             <form action="/bookings" method="POST" id="booking-form">
               <input type="hidden" name="concert_id" value="{{concert._id}}">
               
-              <!-- Minimal Table-Row Select -->
+              <!-- Minimal Number Input -->
               <div class="mb-8 border-t border-b border-gray-200 relative">
-                <label for="ticketCount" class="absolute top-1/2 -translate-y-1/2 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-500 pointer-events-none">Quantité</label>
-                <select name="ticketCount" id="ticketCount" class="w-full bg-transparent text-right font-bold text-lg text-black py-6 outline-none appearance-none cursor-pointer pr-6">
-                  <option value="1" class="bg-white">1 billet</option>
-                  <option value="2" class="bg-white">2 billets</option>
-                  <option value="3" class="bg-white">3 billets</option>
-                  <option value="4" class="bg-white">4 billets</option>
-                  <option value="5" class="bg-white">5 billets</option>
-                </select>
-                <!-- Custom Arrow -->
-                <div class="absolute right-0 top-1/2 -translate-y-1/2 pointer-events-none text-black">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M6 9l6 6 6-6"/>
-                  </svg>
-                </div>
+                <label for="ticketCount" class="absolute top-1/2 -translate-y-1/2 left-0 font-mono text-[10px] uppercase tracking-widest text-gray-500 pointer-events-none">Quantité (max 10)</label>
+                <input type="number" name="ticketCount" id="ticketCount" value="1" min="1" max="10" class="w-full bg-transparent text-right font-bold text-lg text-black py-6 outline-none">
               </div>
 
               <div class="flex justify-between items-end mb-8">
@@ -87,7 +84,11 @@
               </button>
               
               <div class="text-center mt-4">
-                <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500">{{concert.availableTickets}} billets restants</p>
+                {{#if concert.isAlmostSoldOut}}
+                  <p class="font-mono text-[10px] uppercase tracking-widest text-red-500 font-bold">⚠️ Billets presque épuisés !</p>
+                {{else}}
+                  <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500">Billets disponibles</p>
+                {{/if}}
               </div>
             </form>
           {{else}}
@@ -101,7 +102,7 @@
         {{else}}
           <!-- Sold out state -->
           <div class="border-t border-gray-200 pt-6 text-center">
-            <h4 class="font-black text-2xl tracking-tight uppercase mb-2 text-black">Sold Out</h4>
+            <h4 class="font-black text-2xl tracking-tight uppercase mb-2 text-black">Complet</h4>
             <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500">Liste d'attente indisponible</p>
           </div>
         {{/if}}
@@ -119,16 +120,57 @@
   const maxAvailable = {{concert.availableTickets}};
 
   if(ticketCountSelect) {
-    // Disable options if they exceed available tickets
-    Array.from(ticketCountSelect.options).forEach(option => {
-      if(parseInt(option.value) > maxAvailable) {
-        option.disabled = true;
-      }
-    });
+    // Limit max to available tickets or 10, whichever is smaller
+    const maxAllowed = Math.min(10, maxAvailable);
+    ticketCountSelect.max = maxAllowed;
 
-    ticketCountSelect.addEventListener('change', (e) => {
-      const count = parseInt(e.target.value);
+    ticketCountSelect.addEventListener('input', (e) => {
+      let count = parseInt(e.target.value) || 1;
+      if (count > maxAllowed) {
+        count = maxAllowed;
+        e.target.value = maxAllowed;
+      } else if (count < 1) {
+        count = 1;
+        e.target.value = 1;
+      }
       totalPriceEl.textContent = (count * basePrice) + ' FCFA';
+    });
+  }
+
+  // Favorite Band Logic
+  const favBtn = document.querySelector('.fav-btn');
+  if (favBtn) {
+    favBtn.addEventListener('click', async () => {
+      const bandId = favBtn.dataset.bandId;
+      const isFavorite = favBtn.classList.contains('text-orange-600');
+      const endpoint = isFavorite ? '/users/rm-in-fav' : '/users/add-to-fav';
+      
+      try {
+        const response = await fetch(endpoint, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ bandId }),
+        });
+        
+        if (response.ok) {
+          // Toggle classes
+          favBtn.classList.toggle('text-orange-600');
+          favBtn.classList.toggle('bg-orange-50');
+          favBtn.classList.toggle('border-orange-200');
+          favBtn.classList.toggle('text-gray-400');
+          
+          const svg = favBtn.querySelector('svg');
+          if (isFavorite) {
+            svg.setAttribute('fill', 'none');
+          } else {
+            svg.setAttribute('fill', 'currentColor');
+          }
+        }
+      } catch (err) {
+        console.error('Failed to toggle favorite', err);
+      }
     });
   }
 </script>
