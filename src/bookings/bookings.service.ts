@@ -82,7 +82,7 @@ export class BookingsService {
   }
 
   async findByUser(user_id: string) {
-    return this.BookingModel.find({ user_id })
+    return this.BookingModel.find({ user_id: new mongoose.Types.ObjectId(user_id) })
       .populate({
         path: 'concert_id',
         populate: { path: 'band_id' }

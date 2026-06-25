@@ -31,17 +31,18 @@ export class BookingsController {
     @Body() createBookingDto: CreateBookingDto,
     @Res() res: Response,
   ) {
-    console.log(createBookingDto);
-    const user = req.user as User;
-    await this.bookingsService.create(user._id, createBookingDto);
+    const user = req.user as any;
+    const userId = user._id || user.id;
+    await this.bookingsService.create(userId, createBookingDto);
     return res.redirect('/bookings');
   }
 
   @UseGuards(AuthenticatedGuard)
   @Get('/bookings')
   async myBookings(@Request() req: ExpressRequest, @Res() res: Response) {
-    const user = req.user as User;
-    const userBookings = await this.bookingsService.findByUser(user._id);
+    const user = req.user as any;
+    const userId = user._id || user.id;
+    const userBookings = await this.bookingsService.findByUser(userId);
     
     const formattedBookings = userBookings.map((booking: any) => {
       const b = { ...booking };

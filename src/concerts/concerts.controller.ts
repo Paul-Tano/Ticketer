@@ -200,8 +200,8 @@ export class ConcertsController {
   }
 
   // route pour supprimer un concert
-  @Post('admin/concerts/delete')
-  async remove(@Body('id') id: string, @Res() res: Response) {
+  @Post('admin/concerts/delete/:id')
+  async remove(@Param('id') id: string, @Res() res: Response) {
     await this.concertsService.remove(id);
     return res.redirect('/admin/concerts');
   }
