@@ -52,9 +52,7 @@ export class BookingsController {
           day: 'numeric',
           month: 'long',
           year: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-        });
+        }) + ' à ' + (b.concert_id.time || '20:00');
       }
       return b;
     });
