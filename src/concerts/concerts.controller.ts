@@ -151,7 +151,13 @@ export class ConcertsController {
   // route pour afficher le formulaire pour creer un concert
   @Get('admin/concerts/create')
   async createForm(@Res() res: Response) {
-    return res.render('admin/concerts/create');
+    const genres = await this.genresService.findAll();
+    const bands = await this.bandsService.findAll();
+    return res.render('admin/concerts/create', { 
+      currentRouteName: 'admin',
+      genres: genres.map(g => g.toObject()),
+      bands: bands.map(b => b.toObject())
+    });
   }
 
   // route pour vraiment creer le concert
@@ -185,7 +191,12 @@ export class ConcertsController {
     }
     const genres = await this.genresService.findAll();
     const bands = await this.bandsService.findAll();
-    return res.render('admin/concerts/edit', { concert, currentRouteName: 'admin', genres, bands });
+    return res.render('admin/concerts/edit', { 
+      concert, 
+      currentRouteName: 'admin', 
+      genres: genres.map(g => g.toObject()), 
+      bands: bands.map(b => b.toObject()) 
+    });
   }
 
   // route pour vraiment modifier le concert
