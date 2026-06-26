@@ -59,7 +59,11 @@ export class BandsController {
   @Render('admin/bands/edit')
   async showEditForm(@Param('id') id: string) {
     const band = await this.bandsService.findOne(id);
-    return { band: band?.toJSON(), currentRouteName: 'admin' };
+    const bandObj = band?.toObject();
+    return { 
+      band: bandObj ? { ...bandObj, _id: bandObj._id.toString() } : null, 
+      currentRouteName: 'admin' 
+    };
   }
 
   @UseGuards(AuthenticatedGuard, AdminGuard)
