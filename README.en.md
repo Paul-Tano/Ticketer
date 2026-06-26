@@ -2,7 +2,7 @@
 
 **A modern ticketing and concert management platform.**
 
-[![Status](https://img.shields.io/badge/Status-In_development-orange.svg)]()
+[![Status](https://img.shields.io/badge/Status-Deployed-success.svg)]()
 [![Deployment](https://img.shields.io/badge/Live_Demo-Render-success.svg)](https://ticketer-ife6.onrender.com)
 
 **Live Demo :** [https://ticketer-ife6.onrender.com](https://ticketer-ife6.onrender.com)

@@ -2,7 +2,7 @@
 
 **Une plateforme moderne de billetterie et de gestion de concerts.**
 
-[![Statut](https://img.shields.io/badge/Statut-En_développement-orange.svg)]()
+[![Statut](https://img.shields.io/badge/Statut-En_production-success.svg)]()
 [![Déploiement](https://img.shields.io/badge/Démo_Live-Render-success.svg)](https://ticketer-ife6.onrender.com)
 
 **Démo Live :** [https://ticketer-ife6.onrender.com](https://ticketer-ife6.onrender.com)
