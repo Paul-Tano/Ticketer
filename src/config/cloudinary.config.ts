@@ -1,5 +1,8 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { CloudinaryStorage } from 'multer-storage-cloudinary';
+import { config } from 'dotenv';
+
+config(); // Load .env variables synchronously before configuring Cloudinary
 
 // Configuration du SDK Cloudinary
 cloudinary.config({
@@ -15,10 +18,10 @@ export const cloudinaryConcertsConfig = {
     params: {
       // @ts-ignore
       folder: 'ticketer/concerts',
-      allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+      allowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
       public_id: (req: any, file: any) => {
-        const title = req.body.title || 'concert';
-        const date = req.body.date || Date.now();
+        const title = req?.body?.title || 'concert';
+        const date = req?.body?.date || Date.now();
         const cleanTitle = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
         return `${cleanTitle}-${date}`;
       },
@@ -33,9 +36,9 @@ export const cloudinaryBandsConfig = {
     params: {
       // @ts-ignore
       folder: 'ticketer/bands',
-      allowed_formats: ['jpg', 'jpeg', 'png', 'webp'],
+      allowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
       public_id: (req: any, file: any) => {
-        const name = req.body.name || 'band';
+        const name = req?.body?.name || 'band';
         const cleanName = name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
         return `${cleanName}-${Date.now()}`;
       },

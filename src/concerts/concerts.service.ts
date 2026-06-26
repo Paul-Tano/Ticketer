@@ -31,12 +31,12 @@ export class ConcertsService {
       query.band_id = filters.band_id;
     }
     if (filters?.date) {
-      // filters.date is expected in 'DD-MM-YYYY' format from flatpickr
+      // filters.date is natively sent in 'YYYY-MM-DD' format by HTML5 input type="date"
       const parts = filters.date.split('-');
       if (parts.length === 3) {
-        const day = parseInt(parts[0], 10);
+        const year = parseInt(parts[0], 10);
         const month = parseInt(parts[1], 10) - 1; // months are 0-indexed in JS Date
-        const year = parseInt(parts[2], 10);
+        const day = parseInt(parts[2], 10);
         
         const startDate = new Date(year, month, day, 0, 0, 0);
         const endDate = new Date(year, month, day, 23, 59, 59, 999);

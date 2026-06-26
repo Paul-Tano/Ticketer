@@ -67,17 +67,8 @@ export class ConcertsController {
     return res.render('concerts/index', {
       concerts: formattedConcerts,
       thisWeekConcerts,
-      genres: [
-        { _id: '69fbf0df1c3898227fd246a4', name: 'Rap' },
-        { _id: '69fbf0f01c3898227fd246a6', name: 'Drill Ivoire' },
-        { _id: '69fbf1041c3898227fd246a8', name: 'Hip Hop' },
-      ],
-      bands: [
-        { _id: '69fbf04d1c3898227fd2469b', name: 'Didi B' },
-        { _id: '69fbf0631c3898227fd2469d', name: 'Himra' },
-      ],
-      //genres:[],await this.genresService.findAll(),
-      //bands: [],await this.bandsService.findAll(),
+      genres: (await this.genresService.findAll()).map(g => g.toObject()),
+      bands: (await this.bandsService.findAll()).map(b => b.toObject()),
       selectedGenre: genre_id,
       selectedBand: band_id,
       selectedDate: date,

@@ -49,7 +49,7 @@ export class AppController {
     const urgentConcerts = await this.concertsService.findUrgent(4);
     const upcomingConcerts = await this.concertsService.findUpcoming(4);
     const allBands = await this.bandsService.findAll();
-    //const allGenres = await this.GenresService.findAll();
+    const allGenres = await this.genresService.findAll();
     return res.render('index', {
       urgentConcerts: urgentConcerts.map((c) => ({
         ...c,
@@ -68,8 +68,9 @@ export class AppController {
           year: 'numeric',
         }) + ' à ' + (c.time || '20:00'),
       })),
+      bands: allBands.map(b => b.toObject()),
       allBands: allBands.map(b => b.toObject()),
-      // allGenres: allGenres,
+      Allgenres: allGenres.map(g => g.toObject()),
     });
   }
 
