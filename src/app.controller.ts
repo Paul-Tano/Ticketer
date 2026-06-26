@@ -14,6 +14,7 @@ import { User } from './users/types/usersType';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 import { validate } from 'class-validator';
 import { plainToInstance } from 'class-transformer';
+import { formatConcertDate } from './utils/date.formatter';
 
 import {
   Body,
@@ -44,8 +45,6 @@ export class AppController {
 
   @Get('/')
   async home(@Request() req: ExpressRequest, @Res() res: Response) {
-    console.log("req.session ID: ", req.sessionID);
-    console.log("req.user in home: ", req.user ? 'exists' : 'undefined');
     const urgentConcerts = await this.concertsService.findUrgent(4);
     const upcomingConcerts = await this.concertsService.findUpcoming(4);
     const allBands = await this.bandsService.findAll();
@@ -54,19 +53,11 @@ export class AppController {
       urgentConcerts: urgentConcerts.map((c) => ({
         ...c,
         isSoldOut: c.availableTickets === 0,
-        formattedDate: new Date(c.date).toLocaleDateString('fr-FR', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        }) + ' à ' + (c.time || '20:00'),
+        formattedDate: formatConcertDate(c.date, c.time, false),
       })),
       upcomingConcerts: upcomingConcerts.map((c) => ({
         ...c,
-        formattedDate: new Date(c.date).toLocaleDateString('fr-FR', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        }) + ' à ' + (c.time || '20:00'),
+        formattedDate: formatConcertDate(c.date, c.time, false),
       })),
       bands: allBands.map(b => b.toObject()),
       allBands: allBands.map(b => b.toObject()),
@@ -204,8 +195,7 @@ export class AppController {
   }
 
   //admin home(dashbord)
-  @UseGuards(AuthenticatedGuard)
-  @UseGuards(AdminGuard)
+  @UseGuards(AuthenticatedGuard, AdminGuard)
   @Get('/admin')
   async dashbord(@Res() res: Response) {
     const admins = await this.usersService.findAdmin();
@@ -216,7 +206,6 @@ export class AppController {
     const countGenres = allGenres.length;
     const allBands = await this.bandsService.findAll();
     const countBands = allBands.length;
-    console.log(admins);
     return res.render('admin/index', {
       admins: admins.map((admin) => admin.toObject()),
       countBookings: countBookings,
@@ -228,8 +217,7 @@ export class AppController {
     });
   }
 
-  @UseGuards(AuthenticatedGuard)
-  @UseGuards(AdminGuard)
+  @UseGuards(AuthenticatedGuard, AdminGuard)
   @Get('/admin/users')
   async adminUsers(@Res() res: Response) {
     const users = await this.usersService.findAll();
@@ -267,13 +255,7 @@ export class AppController {
       concerts: concerts.map((c) => ({
         ...c,
         isSoldOut: c.availableTickets === 0,
-        formattedDate: new Date(c.date).toLocaleDateString('fr-FR', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-        }),
+        formattedDate: formatConcertDate(c.date, c.time, false),
       })),
       currentRouteName: 'artistes',
     });

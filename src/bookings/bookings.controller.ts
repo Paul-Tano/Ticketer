@@ -14,10 +14,10 @@ import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 import type { Request as ExpressRequest } from 'express';
 import type { Response } from 'express';
-import { User } from 'src/users/types/usersType';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
+import { formatConcertDate } from 'src/utils/date.formatter';
 
 @Controller()
 export class BookingsController {
@@ -47,12 +47,7 @@ export class BookingsController {
     const formattedBookings = userBookings.map((booking: any) => {
       const b = { ...booking };
       if (b.concert_id && b.concert_id.date) {
-        b.concert_id.formattedDate = new Date(b.concert_id.date).toLocaleDateString('fr-FR', {
-          weekday: 'long',
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        }) + ' à ' + (b.concert_id.time || '20:00');
+        b.concert_id.formattedDate = formatConcertDate(b.concert_id.date, b.concert_id.time, true);
       }
       return b;
     });
@@ -60,8 +55,7 @@ export class BookingsController {
     return res.render('bookings/index', { bookings: formattedBookings });
   }
 
-  @UseGuards(AuthenticatedGuard)
-  @UseGuards(AdminGuard)
+  @UseGuards(AuthenticatedGuard, AdminGuard)
   @Get('/admin/bookings')
   async findAll(@Request() req: ExpressRequest, @Res() res: Response) {
     const page = parseInt(req.query.page as string) || 1;
@@ -96,8 +90,7 @@ export class BookingsController {
     });
   }
 
-  @UseGuards(AuthenticatedGuard)
-  @UseGuards(AdminGuard)
+  @UseGuards(AuthenticatedGuard, AdminGuard)
   @Post('/admin/bookings/:id/delete')
   async removeBooking(@Param('id') id: string, @Res() res: Response) {
     await this.bookingsService.remove(id);

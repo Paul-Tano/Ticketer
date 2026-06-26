@@ -140,7 +140,6 @@ export class UsersController {
   @UseGuards(AuthenticatedGuard, AdminGuard)
   @Post('/role')
   async switchRole(@Body('id') userId: string, @Res() res: Response) {
-    console.log(userId);
     await this.usersService.switchRole(userId);
     return res.redirect('/admin/users');
   }
@@ -175,7 +174,6 @@ export class UsersController {
   @Post('/delete/:id')
   @UseInterceptors(NoFilesInterceptor())
   async remove(@Param('id') userId: string, @Res() res: Response) {
-    console.log(userId);
     await this.usersService.remove(userId);
     return res.redirect('/admin/users');
   }

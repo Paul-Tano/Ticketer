@@ -1,0 +1,45 @@
+<div class="min-h-screen bg-black text-white flex flex-col items-center justify-center p-8 relative overflow-hidden">
+  
+  <!-- Abstract Background Elements -->
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-orange-600/5 rounded-full blur-[120px] pointer-events-none"></div>
+  <div class="absolute top-0 right-0 w-96 h-96 bg-red-900/10 rounded-full blur-[100px] pointer-events-none mix-blend-screen"></div>
+  
+  <!-- Content Container -->
+  <div class="relative z-10 flex flex-col items-center text-center max-w-2xl w-full">
+      
+    <!-- Status Code & Title -->
+    <h1 class="text-[150px] leading-none font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-zinc-800 mb-6 drop-shadow-2xl">
+      403
+    </h1>
+    
+    <h2 class="text-3xl md:text-4xl font-black uppercase tracking-tight text-white mb-6">
+      Accès <span class="text-orange-500">Interdit</span>
+    </h2>
+    
+    <div class="w-16 h-1 bg-orange-600 mb-8 mx-auto"></div>
+    
+    <!-- Explanation Text -->
+    <p class="text-zinc-400 font-mono text-sm leading-relaxed max-w-md mx-auto mb-12">
+      Votre niveau d'habilitation est insuffisant pour accéder à cette section. L'accès au panneau d'administration est strictement réservé au personnel autorisé.
+    </p>
+    
+    <!-- Action Buttons -->
+    <div class="flex flex-col sm:flex-row items-center gap-6 justify-center">
+      <a href="/" class="group relative px-10 py-4 bg-orange-600 text-white text-xs font-black uppercase tracking-widest hover:bg-orange-500 transition-all duration-300 overflow-hidden flex items-center gap-3 w-full sm:w-auto justify-center">
+        <span class="relative z-10 flex items-center gap-2">
+          <i data-lucide="arrow-left" class="w-4 h-4 group-hover:-translate-x-1 transition-transform"></i>
+          Retour à l'accueil
+        </span>
+        <div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+      </a>
+      
+      {{#unless user}}
+        <a href="/login" class="px-10 py-4 bg-transparent border border-zinc-700 text-zinc-300 text-xs font-bold uppercase tracking-widest hover:border-orange-500 hover:text-white transition-all duration-300 flex items-center gap-2 w-full sm:w-auto justify-center">
+          <i data-lucide="log-in" class="w-4 h-4"></i>
+          Se connecter
+        </a>
+      {{/unless}}
+    </div>
+    
+  </div>
+</div>

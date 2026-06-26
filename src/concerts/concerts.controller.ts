@@ -11,8 +11,12 @@ import {
   UseInterceptors,
   UploadedFile,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import type { Response } from 'express';
+import { AuthenticatedGuard } from '../auth/guards/authenticated.guard';
+import { AdminGuard } from '../auth/guards/admin.guard';
+import { formatConcertDate } from '../utils/date.formatter';
 import { ConcertsService } from './concerts.service';
 import { GenresService } from '../genres/genres.service';
 import { BandsService } from '../bands/bands.service';
@@ -57,11 +61,7 @@ export class ConcertsController {
     );
     const formattedConcerts = concerts.map((c) => ({
       ...c,
-      formattedDate: new Date(c.date).toLocaleDateString('fr-FR', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      }) + ' à ' + (c.time || '20:00'),
+      formattedDate: formatConcertDate(c.date, c.time, false),
     }));
 
     return res.render('concerts/index', {
@@ -87,11 +87,8 @@ export class ConcertsController {
     const formattedConcert = {
       ...concert,
       isAlmostSoldOut,
-      formattedDate: parsedDate.toLocaleDateString('fr-FR', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      }) + ' à ' + (concert.time || '20:00'),
+      isSoldOut: concert.availableTickets === 0,
+      formattedDate: formatConcertDate(parsedDate, concert.time, true),
     };
 
     let isFavorite = false;
@@ -106,22 +103,21 @@ export class ConcertsController {
   }
 
   // route de l'admin pour que il puisse voir tous les concerts
+  @UseGuards(AuthenticatedGuard, AdminGuard)
   @Get('admin/concerts')
   async adminIndex(@Res() res: Response) {
     const concerts = await this.concertsService.findAll();
     return res.render('admin/concerts/index', {
       concerts: concerts.map(c => ({
         ...c,
-        date: new Date(c.date).toLocaleDateString('fr-FR', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric'
-        }) + ' à ' + (c.time || '20:00')
+        isSoldOut: c.availableTickets === 0,
+        formattedDate: formatConcertDate(c.date, c.time, false),
       })),
       currentRouteName: 'admin',
     });
   }
   // route pour afficher le formulaire pour creer un concert
+  @UseGuards(AuthenticatedGuard, AdminGuard)
   @Get('admin/concerts/create')
   async createForm(@Res() res: Response) {
     const genres = await this.genresService.findAll();
@@ -133,10 +129,8 @@ export class ConcertsController {
     });
   }
 
-  // route pour vraiment creer le concert
-
-  //on configure mutler pour pouvoir nous meme gerer la destination de l'image
-
+  // route pour creer un concert
+  @UseGuards(AuthenticatedGuard, AdminGuard)
   @Post('admin/concerts')
   @UseInterceptors(FileInterceptor('image', cloudinaryConcertsConfig))
   async create(
@@ -152,6 +146,7 @@ export class ConcertsController {
   }
 
   // route pour afficher le formulaire de modif
+  @UseGuards(AuthenticatedGuard, AdminGuard)
   @Get('admin/concerts/:id/edit')
   async editForm(@Param('id') id: string, @Res() res: Response) {
     const concert = await this.concertsService.findOne(id);
@@ -172,7 +167,8 @@ export class ConcertsController {
     });
   }
 
-  // route pour vraiment modifier le concert
+  // route pour modifier un concert
+  @UseGuards(AuthenticatedGuard, AdminGuard)
   @Post('admin/concerts/:id/update')
   @UseInterceptors(FileInterceptor('image', cloudinaryConcertsConfig))
   async update(
@@ -191,6 +187,7 @@ export class ConcertsController {
   }
 
   // route pour supprimer un concert
+  @UseGuards(AuthenticatedGuard, AdminGuard)
   @Post('admin/concerts/delete/:id')
   async remove(@Param('id') id: string, @Res() res: Response) {
     await this.concertsService.remove(id);

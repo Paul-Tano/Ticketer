@@ -8,6 +8,7 @@ import { allowInsecurePrototypeAccess } from '@handlebars/allow-prototype-access
 import { ValidationPipe } from '@nestjs/common';
 import session from 'express-session';
 import passport from 'passport';
+import { ForbiddenExceptionFilter } from './common/filters/forbidden.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -36,6 +37,7 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setViewEngine('hbs');
   app.useGlobalPipes(new ValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true } }));
+  app.useGlobalFilters(new ForbiddenExceptionFilter());
   const MongoStore = require('connect-mongo').default;
   app.use(
     session({

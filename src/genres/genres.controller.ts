@@ -54,7 +54,6 @@ export class GenreController {
   @Render('admin/genres/index')
   async findAll() {
     const genres = await this.genresService.findAll();
-    console.log(genres);
     return {
       genres: genres.map((genre) => genre.toObject()),
       currentRouteName: 'admin',
