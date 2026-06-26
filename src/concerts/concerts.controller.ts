@@ -19,26 +19,7 @@ import { BandsService } from '../bands/bands.service';
 import { CreateConcertDto } from './dto/create-concert.dto';
 import { UpdateConcertDto } from './dto/update-concert.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
-//import type { Multer } from 'multer';
-
-const multerConfig = {
-  storage: diskStorage({
-    destination: './public/uploads/concerts',
-
-    filename: (req: any, file: any, callback: any) => {
-      const title = req.body.title || 'concert';
-      const date = req.body.date;
-      const cleanTitle = title
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/[^a-z0-9-]/g, '');
-      const fileconcert = `${cleanTitle}-${date}-${extname(file.originalname)}`;
-      callback(null, fileconcert);
-    },
-  }),
-};
+import { cloudinaryConcertsConfig } from '../config/cloudinary.config';
 
 import { UsersService } from '../users/users.service';
 
@@ -166,14 +147,14 @@ export class ConcertsController {
   //on configure mutler pour pouvoir nous meme gerer la destination de l'image
 
   @Post('admin/concerts')
-  @UseInterceptors(FileInterceptor('image', multerConfig))
+  @UseInterceptors(FileInterceptor('image', cloudinaryConcertsConfig))
   async create(
     @Body() dto: CreateConcertDto,
     @Res() res: Response,
     @UploadedFile() file: any,
   ) {
     if (file) {
-      dto.image = `/uploads/concerts/${file.filename}`;
+      dto.image = file.path; // Cloudinary returns the secure URL in file.path
     }
     await this.concertsService.create(dto);
     return res.redirect('/admin/concerts');
@@ -202,7 +183,7 @@ export class ConcertsController {
 
   // route pour vraiment modifier le concert
   @Post('admin/concerts/:id/update')
-  @UseInterceptors(FileInterceptor('image', multerConfig))
+  @UseInterceptors(FileInterceptor('image', cloudinaryConcertsConfig))
   async update(
     @Param('id') id: string,
     @Body() dto: UpdateConcertDto,
@@ -210,7 +191,7 @@ export class ConcertsController {
     @UploadedFile() file: any,
   ) {
     if (file) {
-      dto.image = `/uploads/concerts/${file.filename}`;
+      dto.image = file.path; // Cloudinary returns the secure URL in file.path
     } else {
       delete dto.image;
     }
