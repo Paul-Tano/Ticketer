@@ -12,6 +12,7 @@ import {
   UploadedFile,
   Req,
   UseGuards,
+  BadRequestException,
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { AuthenticatedGuard } from '../auth/guards/authenticated.guard';
@@ -138,30 +139,13 @@ export class ConcertsController {
     @Res() res: Response,
     @UploadedFile() file: any,
   ) {
-    try {
-      console.log('--- START CONCERT CREATION ---');
-      console.log('DTO received:', JSON.stringify(dto, null, 2));
-      console.log('File received:', file ? file.path : 'No file');
-
-      if (file) {
-        dto.image = file.path; // Cloudinary returns the secure URL in file.path
-      }
-      
-      const createdConcert = await this.concertsService.create(dto);
-      console.log('Concert successfully created:', createdConcert._id);
-      console.log('--- END CONCERT CREATION ---');
-      
-      return res.redirect('/admin/concerts');
-    } catch (error: any) {
-      console.error('!!! ERROR DURING CONCERT CREATION !!!');
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
-      if (error.name === 'ValidationError') {
-        console.error('Mongoose Validation Error:', error.errors);
-      }
-      // Re-throw to let NestJS handle the 500 response
-      throw error;
+    if (!file) {
+      throw new BadRequestException("L'image de l'événement est obligatoire.");
     }
+    
+    dto.image = file.path; // Cloudinary returns the secure URL in file.path
+    await this.concertsService.create(dto);
+    return res.redirect('/admin/concerts');
   }
 
   // route pour afficher le formulaire de modif

@@ -9,6 +9,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { BandsService } from './bands.service';
 import type { Response } from 'express';
@@ -47,9 +48,10 @@ export class BandsController {
     @Res() res: Response,
     @UploadedFile() file: any,
   ) {
-    if (file) {
-      body.image = file.path; // Cloudinary returns the secure URL
+    if (!file) {
+      throw new BadRequestException("L'image du groupe est obligatoire.");
     }
+    body.image = file.path; // Cloudinary returns the secure URL
     await this.bandsService.create(body);
     return res.redirect('/admin/bands');
   }
