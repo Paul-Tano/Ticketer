@@ -23,19 +23,23 @@ export class NotificationsService {
   ) {}
 
   async create(bandId: string, concertId: string) {
-    const users = await this.userModel.find().exec();
-    const concernedUsers = users.filter((user) => {
-      return user.favoritBands.includes(new Types.ObjectId(bandId));
-    });
-    if (concernedUsers.length == 0) {
+    const concernedUsers = await this.userModel.find({
+      favoritBands: new Types.ObjectId(bandId)
+    }).exec();
+
+    if (concernedUsers.length === 0) {
       return;
     }
 
     const band = await this.bandModel.findById(bandId);
     const concert = await this.concertModel.findById(concertId);
-    const docs = users.map((user) => ({
+    
+    if (!band || !concert) return;
+
+    const docs = concernedUsers.map((user) => ({
       user_id: user._id,
-      message: `Nouveau concert de ${band?.name} : ${concert?.title}`,
+      concert_id: new Types.ObjectId(concertId),
+      message: `Nouveau concert : ${concert.title} par ${band.name}`,
       read: false,
     }));
     await this.notificationModel.insertMany(docs);
@@ -44,7 +48,11 @@ export class NotificationsService {
   async findAllForUser(userId: string): Promise<NotificationDocument[]> {
     return this.notificationModel
       .find({ user_id: userId })
-      .sort({ createdAt: -1 })
+      .populate({
+        path: 'concert_id',
+        populate: { path: 'band_id' }
+      })
+      .sort({ created_at: -1 })
       .exec();
   }
   async allRead(userId: string): Promise<void> {
@@ -53,6 +61,13 @@ export class NotificationsService {
       { $set: { read: true } },
     );
   }
+
+  async markAsRead(notificationId: string): Promise<void> {
+    await this.notificationModel.findByIdAndUpdate(notificationId, {
+      $set: { read: true },
+    });
+  }
+
   async countUnread(userId: string): Promise<number> {
     return this.notificationModel.countDocuments({
       user_id: userId,

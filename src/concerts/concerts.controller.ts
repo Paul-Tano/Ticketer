@@ -25,8 +25,8 @@ import { CreateConcertDto } from './dto/create-concert.dto';
 import { UpdateConcertDto } from './dto/update-concert.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { cloudinaryConcertsConfig } from '../config/cloudinary.config';
-
 import { UsersService } from '../users/users.service';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Controller()
 export class ConcertsController {
@@ -35,6 +35,7 @@ export class ConcertsController {
     private readonly genresService: GenresService,
     private readonly bandsService: BandsService,
     private readonly usersService: UsersService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   // route pour voir tous les concerts
@@ -144,7 +145,11 @@ export class ConcertsController {
     }
     
     dto.image = file.path; // Cloudinary returns the secure URL in file.path
-    await this.concertsService.create(dto);
+    const concert = await this.concertsService.create(dto);
+    
+    // Trigger notification
+    await this.notificationsService.create(dto.band_id, concert._id.toString());
+    
     return res.redirect('/admin/concerts');
   }
 

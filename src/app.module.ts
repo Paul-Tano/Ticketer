@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -10,6 +10,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { BandsModule } from './bands/bands.module';
 import { GenreModule } from './genres/genres.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { NotificationsMiddleware } from './notifications/notifications.middleware';
+
 @Module({
   imports: [
     // Permet de charge le .env
@@ -34,4 +36,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(NotificationsMiddleware).forRoutes('*');
+  }
+}

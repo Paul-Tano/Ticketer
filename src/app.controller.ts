@@ -238,16 +238,24 @@ export class AppController {
   }
 
   @Get('/artistes/:id')
-  async artisteDetail(@Param('id') id: string, @Res() res: Response) {
+  async artisteDetail(
+    @Param('id') id: string,
+    @Res() res: Response,
+    @Request() req: ExpressRequest
+  ) {
     const band = await this.bandsService.findOne(id);
     if (!band) {
       return res.redirect('/artistes');
     }
     
+    let isFavorite = false;
+    const user = req.user as any;
+    if (user) {
+      const fullUser = await this.usersService.findOne(user._id);
+      isFavorite = fullUser?.favoritBands?.some((b: any) => b._id.toString() === id) || false;
+    }
+    
     // Find all concerts for this band
-    // Wait, ConcertsService doesn't have a findByBandId method, let's use the schema directly or add one.
-    // Instead of using ConcertsService directly, let's fetch using mongoose if not available, or I'll add the method to ConcertsService later.
-    // For now, let's call a method findByBandId that we will implement next.
     const concerts = await this.concertsService.findByBandId(id);
     
     return res.render('bands/detail', {
@@ -257,6 +265,8 @@ export class AppController {
         isSoldOut: c.availableTickets === 0,
         formattedDate: formatConcertDate(c.date, c.time, false),
       })),
+      user: user,
+      isFavorite,
       currentRouteName: 'artistes',
     });
   }

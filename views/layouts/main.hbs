@@ -83,14 +83,12 @@
                         <i data-lucide="ticket" class="w-5 h-5"></i>
                     </a>
                     
-                    {{#if notifications}}
-                        <a href="/notifications" class="relative text-gray-400 hover:text-orange-600 transition-colors">
-                            <i data-lucide="bell" class="w-5 h-5"></i>
-                            {{#if unreadCount}}
-                                <span class="absolute -top-1 -right-1 flex h-3 w-3 items-center justify-center rounded-full bg-orange-500 border-2 border-white shadow-sm"></span>
-                            {{/if}}
-                        </a>
-                    {{/if}}
+                    <a href="/notifications" class="relative text-gray-400 hover:text-orange-600 transition-colors" title="Notifications">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        {{#if unreadNotifsCount}}
+                            <span class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 border-2 border-white shadow-sm text-[8px] font-bold text-white">{{unreadNotifsCount}}</span>
+                        {{/if}}
+                    </a>
                     
                     <a href="/profile" class="flex items-center gap-2 group">
                         <div class="h-8 w-8 rounded-full overflow-hidden border border-gray-200 group-hover:border-orange-500 transition-colors bg-gray-50 flex items-center justify-center shadow-sm group-hover:shadow-[0_0_15px_rgba(234,88,12,0.2)]">

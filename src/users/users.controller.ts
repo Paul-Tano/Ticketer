@@ -177,4 +177,28 @@ export class UsersController {
     await this.usersService.remove(userId);
     return res.redirect('/admin/users');
   }
+
+  @UseGuards(AuthenticatedGuard)
+  @Post('favorites/:bandId/toggle')
+  async toggleFavorite(
+    @Param('bandId') bandId: string,
+    @Request() req: ExpressRequest,
+    @Res() res: Response,
+  ) {
+    const user = req.user as any;
+    const fullUser = await this.usersService.findOne(user._id);
+    
+    // Check if band is already in favorites
+    const isFavorite = fullUser?.favoritBands?.some((b: any) => b._id.toString() === bandId);
+    
+    if (isFavorite) {
+      await this.usersService.rmFavoritBand(user._id, bandId);
+    } else {
+      await this.usersService.addFavoritBand(user._id, bandId);
+    }
+    
+    // Redirect back to the referrer (the page they came from)
+    const referer = req.header('Referer') || '/';
+    return res.redirect(referer);
+  }
 }

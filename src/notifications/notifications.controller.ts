@@ -1,13 +1,11 @@
 import {
   Controller,
   Get,
-  Patch,
-  Delete,
+  Post,
+  Param,
   Res,
   Request,
   UseGuards,
-  Body,
-  UseInterceptors,
 } from '@nestjs/common';
 import type { Response, Request as ExpressRequest } from 'express';
 import { NotificationsService } from './notifications.service';
@@ -32,39 +30,33 @@ export class NotificationsController {
 
   @UseGuards(AuthenticatedGuard)
   @Get()
-  async findAllForUser(@Request() req: ExpressRequest) {
+  async findAllForUser(@Request() req: ExpressRequest, @Res() res: Response) {
     const user = req.user as User;
-    const notifications = await this.notificationsService.findAllForUser(
-      user._id,
-    );
-    return notifications;
-  }
-
-  //pourt tester la création de notif
-  @Get('/test')
-  async create() {
-    const concertid = '69fe89313b6b66d471ff0950';
-    const band_Id = '69fcfcca5b432fd239f5471e';
-    return this.notificationsService.create(band_Id, concertid);
+    const notifications = await this.notificationsService.findAllForUser(user._id);
+    return res.render('notifications/index', {
+      notifications: notifications.map(n => n.toObject()),
+      currentRouteName: 'notifications'
+    });
   }
 
   @UseGuards(AuthenticatedGuard)
-  @Patch('read')
+  @Post('read-all')
   async allRead(@Request() req: ExpressRequest, @Res() res: Response) {
     const user = req.user as User;
-
     await this.notificationsService.allRead(user._id);
     return res.redirect('/notifications');
   }
 
   @UseGuards(AuthenticatedGuard)
-  @UseInterceptors(NoFilesInterceptor())
-  @Delete()
-  async deleteNotif(
-    //recuperer l'id dans un formulaire pour plus de secur
-    @Body('id') id: string,
-    @Res() res: Response,
-  ) {
+  @Post(':id/read')
+  async markAsRead(@Param('id') id: string, @Res() res: Response) {
+    await this.notificationsService.markAsRead(id);
+    return res.redirect('/notifications');
+  }
+
+  @UseGuards(AuthenticatedGuard)
+  @Post('delete/:id')
+  async deleteNotif(@Param('id') id: string, @Res() res: Response) {
     await this.notificationsService.deleteNotif(id);
     return res.redirect('/notifications');
   }
