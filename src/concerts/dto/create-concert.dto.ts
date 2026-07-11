@@ -7,12 +7,15 @@ import {
   Min,
   IsOptional,
 } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateConcertDto {
+  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
   @IsNotEmpty({ message: 'Titre requis' })
   @IsString()
   title!: string;
 
+  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
   @IsNotEmpty({ message: 'Description requise' })
   @IsString()
   description!: string;
@@ -25,14 +28,17 @@ export class CreateConcertDto {
   @IsMongoId()
   genre_id!: string;
 
+  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
   @IsNotEmpty({ message: 'Veuillez choisir une date' })
   @IsDateString()
   date!: string;
 
+  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
   @IsNotEmpty({ message: 'Veuillez choisir une heure' })
   @IsString()
   time!: string;
 
+  @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
   @IsNotEmpty({ message: "Veuillez entrer le lieu de l'évènement" })
   @IsString()
   location!: string;

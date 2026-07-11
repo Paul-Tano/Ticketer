@@ -27,16 +27,20 @@ export class BookingsService {
     // Décrémenter les tickets
     await this.concertsService.decrementTickets(dto.concert_id, count, concert.availableTickets);
 
-    const booking: object[] = [];
+    const booking: any[] = [];
+    const appUrl = process.env.APP_URL || 'http://localhost:3000';
 
     for (let i = 0; i < count; i++) {
+      const bookingId = new mongoose.Types.ObjectId();
       const qrCode = await QRCode.toDataURL(
-        `${user_id}-${dto.concert_id}-${i}-${Date.now()}`,
+        `${appUrl}/tickets/validate/${bookingId.toString()}`,
       );
       booking.push({
+        _id: bookingId,
         user_id: new mongoose.Types.ObjectId(user_id),
         concert_id: new mongoose.Types.ObjectId(dto.concert_id),
         qrCode: qrCode,
+        status: 'valide'
       });
     }
 
@@ -108,7 +112,8 @@ export class BookingsService {
     // Increment the available tickets back
     await this.concertsService.incrementTickets(booking.concert_id.toString(), 1);
     
-    // Remove the booking
-    return this.BookingModel.findByIdAndDelete(id);
+    // Remove the booking by marking as annulé instead of deleting
+    booking.status = 'annulé';
+    return booking.save();
   }
 }

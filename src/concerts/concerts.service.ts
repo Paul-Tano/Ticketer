@@ -6,6 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Concert, ConcertDocument } from './schemas/concert.schema';
+import { Booking } from '../bookings/schemas/booking.schema';
 import { CreateConcertDto } from './dto/create-concert.dto';
 import { UpdateConcertDto } from './dto/update-concert.dto';
 
@@ -14,6 +15,8 @@ export class ConcertsService {
   constructor(
     @InjectModel(Concert.name)
     private concertModel: Model<ConcertDocument>,
+    @InjectModel(Booking.name)
+    private bookingModel: Model<Booking>,
   ) {}
 
   // afficher tous les concerts avec les filtres
@@ -151,6 +154,9 @@ export class ConcertsService {
 
   // Supprimer un concert
   async remove(id: string): Promise<ConcertDocument> {
+    // Suppression en cascade des réservations liées
+    await this.bookingModel.deleteMany({ concert_id: id }).exec();
+
     const concert = await this.concertModel.findByIdAndDelete(id).exec();
 
     if (!concert) {

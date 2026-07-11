@@ -18,6 +18,7 @@ import { User } from './types/usersType';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -85,7 +86,7 @@ export class UsersController {
   @Post('profile/update')
   async updateProfile(
     @Request() req: ExpressRequest,
-    @Body() body: any,
+    @Body() body: UpdateUserDto,
     @Res() res: Response
   ) {
     const user = req.user as User;
@@ -123,7 +124,7 @@ export class UsersController {
   @UseInterceptors(NoFilesInterceptor())
   async updateUser(
     @Param('id') id: string,
-    @Body() body: any,
+    @Body() body: UpdateUserDto,
     @Res() res: Response
   ) {
     await this.usersService.update(id, body);

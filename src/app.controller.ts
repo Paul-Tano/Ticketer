@@ -9,7 +9,6 @@ import { LocalAuthGuard } from './auth/guards/local.auth.guard';
 import { AuthenticatedGuard } from './auth/guards/authenticated.guard';
 import type { Request as ExpressRequest } from 'express';
 import { AuthService } from './auth/auth.service';
-import { UpdateUserDto } from './users/dto/update-user.dto';
 import { User } from './users/types/usersType';
 import { NoFilesInterceptor } from '@nestjs/platform-express';
 import { validate } from 'class-validator';
@@ -165,25 +164,7 @@ export class AppController {
     return res.render('profile/index', { user: profileData });
   }
 
-  //update profile
-  @UseGuards(AuthenticatedGuard)
-  @UseInterceptors(NoFilesInterceptor())
-  @Patch('/profile')
-  async update(@Request() req: ExpressRequest, @Body() body: any) {
-    const currentUser = req.user as User;
-    const dto = plainToInstance(UpdateUserDto, body);
 
-    const errors = await validate(dto);
-    const formatedErrors = {};
-    if (errors.length > 0) {
-      for (const error of errors) {
-        formatedErrors[error.property] = Object.values(error.constraints ?? {});
-      }
-      console.log(formatedErrors);
-    }
-    await this.usersService.update(currentUser._id, dto);
-    return;
-  }
 
   //remove profile
   @UseGuards(AuthenticatedGuard)
@@ -225,6 +206,43 @@ export class AppController {
       currentRouteName: 'admin',
       users: users.map((user) => user.toObject()),
     });
+  }
+
+  @UseGuards(AuthenticatedGuard, AdminGuard)
+  @Get('/admin/users/create')
+  async adminUserCreateView(@Res() res: Response) {
+    return res.render('admin/users/create', { currentRouteName: 'admin' });
+  }
+
+  @UseGuards(AuthenticatedGuard, AdminGuard)
+  @Post('/admin/users/create')
+  async adminUserCreate(@Body() body: any, @Res() res: Response) {
+    const dto = plainToInstance(CreateUserDto, body);
+    const errors = await validate(dto);
+    
+    if (errors.length > 0) {
+      return res.render('admin/users/create', {
+        error: "Veuillez remplir correctement tous les champs.",
+        currentRouteName: 'admin',
+      });
+    }
+
+    if (dto.confirm !== dto.password) {
+      return res.render('admin/users/create', {
+        error: "Les mots de passe ne correspondent pas.",
+        currentRouteName: 'admin',
+      });
+    }
+
+    try {
+      await this.usersService.create(dto);
+      return res.redirect('/admin/users');
+    } catch (e: any) {
+      return res.render('admin/users/create', {
+        error: e.response?.message || e.message || "Une erreur est survenue.",
+        currentRouteName: 'admin',
+      });
+    }
   }
 
   // Public routes for artistes (bands)
@@ -269,5 +287,37 @@ export class AppController {
       isFavorite,
       currentRouteName: 'artistes',
     });
+  }
+
+  // Public route for ticket validation (scanned from QR Code)
+  @Get('/tickets/validate/:id')
+  async validateTicket(@Param('id') id: string, @Res() res: Response) {
+    try {
+      const { reservation } = await this.bookingsService.findOne(id);
+      if (!reservation) {
+        return res.render('bookings/ticket', { error: 'Billet introuvable.' });
+      }
+      return res.render('bookings/ticket', { 
+        ticket: reservation.toObject(),
+        formattedDate: formatConcertDate((reservation.concert_id as any).date, (reservation.concert_id as any).time, false)
+      });
+    } catch (e) {
+      return res.render('bookings/ticket', { error: 'Billet invalide ou erreur.' });
+    }
+  }
+
+  // Route to mark ticket as scanned
+  @Post('/tickets/scan/:id')
+  async scanTicket(@Param('id') id: string, @Res() res: Response) {
+    try {
+      const { reservation } = await this.bookingsService.findOne(id);
+      if (reservation && reservation.status === 'valide') {
+        reservation.status = 'scanné';
+        await reservation.save();
+      }
+      return res.redirect(`/tickets/validate/${id}`);
+    } catch (e) {
+      return res.redirect(`/tickets/validate/${id}`);
+    }
   }
 }

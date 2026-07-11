@@ -51,6 +51,31 @@
 </head>
 
 <body class="bg-[#F8F9FA] font-sans text-gray-900 antialiased mx-auto selection:bg-orange-500 selection:text-white">
+  
+  {{#if globalError}}
+  <div class="fixed top-4 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-md bg-red-50 border border-red-200 p-4 shadow-xl">
+    <div class="flex items-start">
+      <div class="flex-shrink-0 mt-0.5">
+        <i data-lucide="alert-circle" class="h-4 w-4 text-red-500"></i>
+      </div>
+      <div class="ml-3 flex-1">
+        <h3 class="text-xs font-bold uppercase tracking-widest text-red-800 mb-1">
+          Erreur de validation
+        </h3>
+        <div class="text-sm text-red-600 font-medium">
+          <p>{{{globalError}}}</p>
+        </div>
+      </div>
+      <div class="ml-4 flex-shrink-0 flex">
+        <button type="button" class="bg-red-50 rounded-md inline-flex text-red-500 hover:text-red-600 focus:outline-none" onclick="this.parentElement.parentElement.parentElement.style.display='none'">
+          <span class="sr-only">Fermer</span>
+          <i data-lucide="x" class="h-4 w-4"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  {{/if}}
+
 {{#if (and (isNot currentRouteName 'register') (isNot currentRouteName 'login') (isNot currentRouteName 'admin'))}}    
     <!-- MINIMAL EDITORIAL NAVBAR -->
     <nav class="sticky top-0 w-full z-50 bg-white/80 backdrop-blur-xl border-b border-gray-200 px-4 md:px-8 py-4 transition-all shadow-sm">
@@ -323,6 +348,18 @@
 
 <script>
   lucide.createIcons();
+
+  // GLOBAL FORM TRIMMER: Empêcher les espaces vides dans tous les formulaires
+  document.addEventListener('submit', function(e) {
+    if (e.target && e.target.tagName === 'FORM') {
+      const inputs = e.target.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], textarea');
+      inputs.forEach(input => {
+        if (input.value) {
+          input.value = input.value.trim();
+        }
+      });
+    }
+  });
 </script>
 </body>
 </html>

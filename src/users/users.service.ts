@@ -5,10 +5,14 @@ import * as bcrypt from 'bcrypt';
 import { User } from './schemas/users.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { Booking } from '../bookings/schemas/booking.schema';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectModel(User.name) private userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<User>,
+    @InjectModel(Booking.name) private bookingModel: Model<Booking>
+  ) {}
 
   async create(createUser: CreateUserDto) {
     const { password, ...user } = createUser;
@@ -54,6 +58,9 @@ export class UsersService {
   }
 
   async remove(id: string) {
+    // Suppression en cascade des réservations liées
+    await this.bookingModel.deleteMany({ user_id: id }).exec();
+    
     await this.userModel.findByIdAndDelete(id).exec();
     return `user removes with success`;
   }

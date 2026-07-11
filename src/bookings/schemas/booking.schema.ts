@@ -14,6 +14,9 @@ export class Booking {
   @Prop({ required: true, unique: true })
   qrCode!: string;
 
+  @Prop({ type: String, enum: ['valide', 'scanné', 'annulé'], default: 'valide' })
+  status!: string;
+
   created_at!: Date;
   updated_at!: Date;
   // @Prop({ required: true, min: 1 })

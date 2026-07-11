@@ -9,6 +9,7 @@ import { ValidationPipe } from '@nestjs/common';
 import session from 'express-session';
 import passport from 'passport';
 import { ForbiddenExceptionFilter } from './common/filters/forbidden.filter';
+import { ValidationExceptionFilter } from './common/filters/validation.filter';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -37,7 +38,7 @@ async function bootstrap() {
   app.useStaticAssets(join(__dirname, '..', 'public'));
   app.setViewEngine('hbs');
   app.useGlobalPipes(new ValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true } }));
-  app.useGlobalFilters(new ForbiddenExceptionFilter());
+  app.useGlobalFilters(new ForbiddenExceptionFilter(), new ValidationExceptionFilter());
   const MongoStore = require('connect-mongo').default;
   app.use(
     session({
@@ -61,6 +62,13 @@ async function bootstrap() {
     } else {
       res.locals.user = null;
     }
+    
+    // Inject Flash Error
+    if (req.session && (req.session as any).flashError) {
+      res.locals.globalError = (req.session as any).flashError;
+      delete (req.session as any).flashError;
+    }
+    
     next();
   });
 

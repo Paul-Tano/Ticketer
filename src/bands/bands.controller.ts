@@ -17,6 +17,8 @@ import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { cloudinaryBandsConfig } from '../config/cloudinary.config';
+import { CreateBandDto } from './dto/create-band.dto';
+import { UpdateBandDto } from './dto/update-band.dto';
 
 @Controller('admin/bands')
 export class BandsController {
@@ -44,7 +46,7 @@ export class BandsController {
   @Post('create')
   @UseInterceptors(FileInterceptor('image', cloudinaryBandsConfig))
   async create(
-    @Body() body: { name: string; description?: string; image?: string },
+    @Body() body: CreateBandDto,
     @Res() res: Response,
     @UploadedFile() file: any,
   ) {
@@ -73,16 +75,16 @@ export class BandsController {
   @UseInterceptors(FileInterceptor('image', cloudinaryBandsConfig))
   async update(
     @Param('id') id: string,
-    @Body() body: { name: string; description?: string; image?: string },
+    @Body() body: UpdateBandDto,
     @Res() res: Response,
     @UploadedFile() file?: any,
   ) {
     if (file) {
-      body.image = file.path; // Cloudinary returns the secure URL
+      body.image = file.path;
     } else {
       delete body.image;
     }
-    await this.bandsService.update(id, body);
+    await this.bandsService.update(id, body as any);
     return res.redirect('/admin/bands');
   }
 

@@ -1,13 +1,28 @@
-<div class="min-h-screen bg-white flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans text-gray-900">
+<div class="min-h-screen bg-white flex flex-col md:flex-row font-sans text-gray-900">
   
-  <div class="sm:mx-auto sm:w-full sm:max-w-md">
+  <!-- IMAGE COLUMN -->
+  <div class="hidden md:block md:w-1/2 relative bg-black">
+    <img src="https://images.unsplash.com/photo-1540039155732-68c3cb4b6b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Concert ambiance nocturne" class="absolute inset-0 w-full h-full object-cover opacity-60">
+    <div class="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent"></div>
+    <div class="absolute bottom-12 left-12 right-12 text-white">
+      <h1 class="text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tight mb-4 drop-shadow-sm">Ressentez<br>La Basse.</h1>
+      <p class="text-lg text-gray-300 font-medium max-w-md">Retrouvez l'énergie live et accédez à vos billets pour les prochains événements.</p>
+    </div>
+  </div>
+
+  <!-- FORM COLUMN -->
+  <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-32">
+    <div class="mx-auto w-full max-w-md">
     <div class="text-center mb-8">
       <a href="/" class="inline-block text-2xl font-black tracking-tight uppercase hover:opacity-70 transition-opacity mb-4">
         TICKETER.
       </a>
       <h2 class="text-4xl font-black tracking-tight uppercase mb-2">
-        Identification
+        Bon retour
       </h2>
+      <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500 mb-2">
+        Veuillez vous identifier pour retrouver vos billets.
+      </p>
       <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500">
         Nouveau ? 
         <a href="/register" class="text-black border-b border-black hover:text-gray-500 hover:border-gray-500 transition-colors pb-0.5 ml-1">
@@ -92,6 +107,7 @@
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </div>

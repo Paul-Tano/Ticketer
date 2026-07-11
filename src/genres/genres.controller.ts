@@ -11,6 +11,8 @@ import { GenresService } from './genres.service';
 import type { Response } from 'express';
 import { AuthenticatedGuard } from 'src/auth/guards/authenticated.guard';
 import { AdminGuard } from 'src/auth/guards/admin.guard';
+import { CreateGenreDto } from './dto/create-genre.dto';
+import { UpdateGenreDto } from './dto/update-genre.dto';
 
 @Controller('admin/genres')
 export class GenreController {
@@ -26,7 +28,7 @@ export class GenreController {
 
   @UseGuards(AuthenticatedGuard, AdminGuard)
   @Post('create')
-  async create(@Body() body: { name: string }, @Res() res: Response) {
+  async create(@Body() body: CreateGenreDto, @Res() res: Response) {
     await this.genresService.create(body);
     return res.redirect('/admin/genres');
   }
@@ -43,9 +45,9 @@ export class GenreController {
   @Post('update/:id')
   async update(
     @Param('id') id: string, 
-    @Body() body: { name: string }, 
+    @Body() body: UpdateGenreDto, 
     @Res() res: Response) {
-    await this.genresService.update(id, body);
+    await this.genresService.update(id, body as any);
     return res.redirect('/admin/genres');
   }
 
