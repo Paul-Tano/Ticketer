@@ -49,21 +49,19 @@ export class BookingsService {
     return savedReservations;
   }
   
-  async countAll() {
-    return this.BookingModel.countDocuments();
+  async countAll(status: string = 'valide') {
+    return this.BookingModel.countDocuments({ status: status });
   }
   
-  async findAll(page: number = 1, limit: number = 10, search?: string) {
-    let query: any = {};
+  async findAll(page: number = 1, limit: number = 10, search?: string, status: string = 'valide') {
+    let query: any = { status: status };
     if (search) {
       const userIds = await this.usersService.findIdsByUsername(search);
       const concertIds = await this.concertsService.findIdsByTitle(search);
-      query = {
-        $or: [
-          { user_id: { $in: userIds } },
-          { concert_id: { $in: concertIds } }
-        ]
-      };
+      query.$or = [
+        { user_id: { $in: userIds } },
+        { concert_id: { $in: concertIds } }
+      ];
     }
 
     const skip = (page - 1) * limit;

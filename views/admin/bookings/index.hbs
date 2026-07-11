@@ -3,10 +3,15 @@
   <!-- Sidebar -->
   <aside class="fixed top-0 left-0 z-40 w-64 h-screen bg-white border-r border-gray-200">
     <div class="h-full px-6 py-10 overflow-y-auto flex flex-col">
-      <a href="/" class="mb-12">
-        <span class="text-2xl font-black tracking-tight uppercase text-black">TICKETER.</span>
-        <span class="block font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-1">Espace Admin</span>
-      </a>
+      <div class="mb-12">
+        <a href="/" class="block hover:opacity-80 transition-opacity">
+          <span class="text-2xl font-black tracking-tight uppercase text-black">TICKETER.</span>
+          <span class="block font-mono text-[10px] uppercase tracking-widest text-gray-400 mt-1">Espace Admin</span>
+        </a>
+        <a href="/" class="inline-flex items-center mt-6 text-[10px] font-mono uppercase tracking-widest text-gray-500 hover:text-orange-600 transition-colors">
+          ← Retour au site
+        </a>
+      </div>
       
       <ul class="space-y-2 flex-1">
         <li>
@@ -55,7 +60,17 @@
     <div class="mb-12 flex items-end justify-between">
       <div>
         <p class="font-mono text-[10px] uppercase tracking-widest text-gray-400 mb-2">Logs de transactions</p>
-        <h1 class="text-4xl font-black tracking-tight uppercase text-black">Réservations</h1>
+        <h1 class="text-4xl font-black tracking-tight uppercase text-black mb-4">Réservations</h1>
+        
+        <!-- Tabs -->
+        <div class="flex gap-4">
+          <a href="/admin/bookings?status=valide" class="font-bold text-xs uppercase tracking-widest pb-2 border-b-2 {{#if (eq status 'valide')}}border-black text-black{{else}}border-transparent text-gray-400 hover:text-black{{/if}} transition-colors">
+            Actives
+          </a>
+          <a href="/admin/bookings?status=annulé" class="font-bold text-xs uppercase tracking-widest pb-2 border-b-2 {{#if (eq status 'annulé')}}border-red-600 text-red-600{{else}}border-transparent text-gray-400 hover:text-red-600{{/if}} transition-colors">
+            Annulées
+          </a>
+        </div>
       </div>
       
       <!-- Search Form -->
@@ -93,9 +108,13 @@
                 <p class="font-mono text-[10px] uppercase tracking-widest text-gray-500">{{formattedDate}}</p>
               </td>
               <td class="px-6 py-4 text-right opacity-0 group-hover:opacity-100 transition-opacity">
+                {{#if (eq ../status 'valide')}}
                 <button type="button" class="delete-btn text-red-600 hover:text-red-800 font-mono text-[10px] uppercase tracking-widest px-3 py-1 bg-red-50 hover:bg-red-100 border border-red-200 transition-colors rounded-sm" data-action="/admin/bookings/{{_id}}/delete">
                   Annuler
                 </button>
+                {{else}}
+                <span class="text-gray-400 font-mono text-[10px] uppercase tracking-widest">Annulée</span>
+                {{/if}}
               </td>
             </tr>
             {{else}}
@@ -114,7 +133,7 @@
     {{#if totalPages}}
     <div class="flex justify-center gap-2">
       {{#each pages}}
-        <a href="/admin/bookings?page={{this}}{{#if ../search}}&search={{../search}}{{/if}}" 
+        <a href="/admin/bookings?page={{this}}{{#if ../search}}&search={{../search}}{{/if}}&status={{../status}}" 
            class="w-8 h-8 flex items-center justify-center border text-sm font-bold transition-colors
            {{#isNot this ../currentPage}}bg-white border-gray-200 text-gray-600 hover:border-black{{else}}bg-black border-black text-white{{/isNot}}">
           {{this}}

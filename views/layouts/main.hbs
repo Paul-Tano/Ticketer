@@ -92,6 +92,7 @@
             <div class="hidden md:flex items-center gap-8 w-1/3">
                 <a href="/" class="text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-orange-600 transition-colors">Accueil</a>
                 <a href="/concerts" class="text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-orange-600 transition-colors">Programme</a>
+                <a href="/artistes" class="text-xs font-mono uppercase tracking-widest text-gray-500 hover:text-orange-600 transition-colors">Artistes</a>
             </div>
             
             <!-- Center Brand -->
@@ -115,6 +116,12 @@
                         {{/if}}
                     </a>
                     
+                    {{#if (eq user.role 'admin')}}
+                    <a href="/admin" class="text-gray-400 hover:text-orange-600 transition-colors" title="Dashboard">
+                        <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    </a>
+                    {{/if}}
+
                     <a href="/profile" class="flex items-center gap-2 group">
                         <div class="h-8 w-8 rounded-full overflow-hidden border border-gray-200 group-hover:border-orange-500 transition-colors bg-gray-50 flex items-center justify-center shadow-sm group-hover:shadow-[0_0_15px_rgba(234,88,12,0.2)]">
                             <span class="text-[10px] font-bold uppercase text-gray-900">{{user.username}}</span>
@@ -149,10 +156,14 @@
         <div class="flex flex-col gap-8 text-center">
             <a href="/" class="text-3xl font-black uppercase tracking-tight hover:text-orange-600 transition-colors">Accueil</a>
             <a href="/concerts" class="text-3xl font-black uppercase tracking-tight hover:text-orange-600 transition-colors">Programme</a>
+            <a href="/artistes" class="text-3xl font-black uppercase tracking-tight hover:text-orange-600 transition-colors">Artistes</a>
             
             <div class="w-16 h-px bg-gray-300 mx-auto my-4"></div>
             
             {{#if user}}
+                {{#if (eq user.role 'admin')}}
+                <a href="/admin" class="text-xl font-bold uppercase tracking-tight text-gray-600 hover:text-orange-600 transition-colors">Dashboard Admin</a>
+                {{/if}}
                 <a href="/bookings" class="text-xl font-bold uppercase tracking-tight text-gray-600 hover:text-orange-600 transition-colors">Mes Réservations</a>
                 <a href="/profile" class="text-xl font-bold uppercase tracking-tight text-gray-600 hover:text-orange-600 transition-colors">Mon Profil</a>
                 <a href="/logout" class="text-xl font-bold uppercase tracking-tight text-red-600 hover:text-red-700 transition-colors mt-4">Se déconnecter</a>

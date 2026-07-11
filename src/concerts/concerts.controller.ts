@@ -140,6 +140,10 @@ export class ConcertsController {
     @Res() res: Response,
     @UploadedFile() file: any,
   ) {
+    if (dto.availableTickets > dto.totalTickets) {
+      throw new BadRequestException("Le nombre de tickets disponibles ne peut pas dépasser le nombre total de tickets.");
+    }
+    
     if (!file) {
       throw new BadRequestException("L'image de l'événement est obligatoire.");
     }
@@ -161,8 +165,11 @@ export class ConcertsController {
     if (concert && concert.date) {
       let parsedDate = new Date(concert.date);
       if (!isNaN(parsedDate.getTime())) {
+        const year = parsedDate.getFullYear();
+        const month = String(parsedDate.getMonth() + 1).padStart(2, '0');
+        const day = String(parsedDate.getDate()).padStart(2, '0');
         // @ts-ignore
-        concert.formattedDateInput = parsedDate.toISOString().split('T')[0];
+        concert.formattedDateInput = `${year}-${month}-${day}`;
       }
     }
     const genres = await this.genresService.findAll();
@@ -185,6 +192,10 @@ export class ConcertsController {
     @Res() res: Response,
     @UploadedFile() file: any,
   ) {
+    if (dto.availableTickets > dto.totalTickets) {
+      throw new BadRequestException("Le nombre de tickets disponibles ne peut pas dépasser le nombre total de tickets.");
+    }
+
     if (file) {
       dto.image = file.path; // Cloudinary returns the secure URL in file.path
     } else {

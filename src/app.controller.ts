@@ -181,7 +181,8 @@ export class AppController {
   async dashbord(@Res() res: Response) {
     const admins = await this.usersService.findAdmin();
     const countUsers = await this.usersService.findAll().countDocuments();
-    const countBookings = await this.bookingsService.countAll();
+    const countBookings = await this.bookingsService.countAll('valide');
+    const countCancelledBookings = await this.bookingsService.countAll('annulé');
     const countConcerts = await this.concertsService.countAllConcert();
     const allGenres = await this.genresService.findAll();
     const countGenres = allGenres.length;
@@ -190,6 +191,7 @@ export class AppController {
     return res.render('admin/index', {
       admins: admins.map((admin) => admin.toObject()),
       countBookings: countBookings,
+      countCancelledBookings: countCancelledBookings,
       countUsers: countUsers,
       countConcerts: countConcerts,
       countGenres: countGenres,

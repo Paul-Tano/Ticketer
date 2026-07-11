@@ -61,8 +61,9 @@ export class BookingsController {
     const page = parseInt(req.query.page as string) || 1;
     const limit = 10;
     const search = req.query.search as string || '';
+    const status = req.query.status as string || 'valide'; // Default to active bookings
 
-    const result = await this.bookingsService.findAll(page, limit, search);
+    const result = await this.bookingsService.findAll(page, limit, search, status);
     
     const formattedBookings = result.bookings.map((b) => {
       const plain = b.toObject() as any;
@@ -86,6 +87,7 @@ export class BookingsController {
       totalPages: result.totalPages,
       pages,
       search,
+      status, // Pass the status to the template
       currentRouteName: 'admin',
     });
   }
