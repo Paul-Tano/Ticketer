@@ -162,6 +162,16 @@ export class ConcertsController {
   @Get('admin/concerts/:id/edit')
   async editForm(@Param('id') id: string, @Res() res: Response) {
     const concert = await this.concertsService.findOne(id);
+    
+    // Add default values for missing fields in older documents
+    if (!concert.time) {
+      concert.time = '20:00';
+    }
+    if (concert.totalTickets === undefined || concert.totalTickets === null) {
+      // Fallback to availableTickets if totalTickets was not set
+      concert.totalTickets = concert.availableTickets || 0;
+    }
+
     if (concert && concert.date) {
       let parsedDate = new Date(concert.date);
       if (!isNaN(parsedDate.getTime())) {
