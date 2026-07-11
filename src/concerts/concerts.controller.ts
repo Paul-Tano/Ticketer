@@ -140,7 +140,7 @@ export class ConcertsController {
     @Res() res: Response,
     @UploadedFile() file: any,
   ) {
-    if (dto.availableTickets > dto.totalTickets) {
+    if (dto.availableTickets !== undefined && dto.totalTickets !== undefined && dto.availableTickets > dto.totalTickets) {
       throw new BadRequestException("Le nombre de tickets disponibles ne peut pas dépasser le nombre total de tickets.");
     }
     
@@ -192,7 +192,7 @@ export class ConcertsController {
     @Res() res: Response,
     @UploadedFile() file: any,
   ) {
-    if (dto.availableTickets > dto.totalTickets) {
+    if (dto.availableTickets !== undefined && dto.totalTickets !== undefined && dto.availableTickets > dto.totalTickets) {
       throw new BadRequestException("Le nombre de tickets disponibles ne peut pas dépasser le nombre total de tickets.");
     }
 
